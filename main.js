@@ -29,13 +29,14 @@ function showSignUp(){
 function login(){
 	var email = $("#login-form input[name=email]").val();
 	var password = $('#login-form input[name=password]').val();
-	$.post('backend.php', {action: "login", email: email, password: password}, function(data){
+	$.get('backend.php', {action: "login", email: email, password: password}, function(data){
 		if (data['status'] == 'ok') {
 			//hide login form and display home page
 			$("#login").hide();
-
 		} else {
 			//display error message
+			$("#login-form .error").show();
+			$("#login-form .error").html(data['error']);
 		}
 	});
 }
