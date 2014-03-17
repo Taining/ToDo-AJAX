@@ -14,6 +14,12 @@ if (isset($_REQUEST['action'])) {
 		}
 
 		print json_encode($reply);
+	} elseif ($_REQUEST['action'] == 'login') {
+		$reply = array();
+		if (!$_REQUEST['email'] || !$_REQUEST['password']) {
+			$reply['status'] = 'no';
+			$reply['error'] = 'Invalide user or password.';
+		}
 	}
 }
 
