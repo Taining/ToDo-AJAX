@@ -4,7 +4,11 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>To-do Manager</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="main.js"></script>
+
 </head>
 
 <body>
@@ -18,7 +22,7 @@
 
 	<div id="signup">
 		<form method = "POST">
-			<table class="form" id="signup">
+			<table class="form">
 				<tr>
 					<td colspan="3"><h2>Sign Up</h1></td>
 				</tr>
@@ -84,7 +88,7 @@
 	</div>
 
 	<div id="login">
-		<form method = "POST">
+		<form id='login-form'>
 			<table class="form">
 				<tr>
 					<td colspan="2"><div class="error" ></div></td>
@@ -99,13 +103,13 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td><input type="button" class="submit" id="loginButton" value="Log In" /> or <a href="">Sign up</a></td>
+					<td><input type="button" class="submit" id="loginButton" value="Log In" /> or <a id='linkToSignUp'>Sign up</a></td>
 				</tr>
 			</table>
 		</form>
 	</div>
 
-	<div id='content' class="container">
+	<!-- <div id='content' class="container"> -->
 
 	</div>
 	
