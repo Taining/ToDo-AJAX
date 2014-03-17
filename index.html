@@ -19,45 +19,35 @@
 				</div>
 
 				<nav>
-
+					<ul>
+						<li><a href="add-task.html">Add task</a></li>
+						<li><a href="account.html">Account</a></li>
+					</ul>
 				</nav>
 			</div> <!-- end of header-container -->
 		</header>
 		
-		<div id='content' class="container">
-			<!-- navagation to change sort methods -->	
-			<div id='orderby' class='link'>
-				Order by: 
-				<a href="home.php?sort=createdate">Create Date</a>
-				<a href="home.php?sort=priority">Priority</a>
-				<a href="home.php?sort=timeunit">Time Units</a>
+		<div class="container" id="content">
+		
+			<div class="page" id="signup">
 			</div>
 			
-			<div class='tasks'>
-
+			<div class="page" id="login">
+			</div>
+			
+			<div class="page" id='tasks'>
 			</div> <!-- end of tasks -->
 			
-			<div id=container-col>
-				<div id="options" class="small-container">
-					<p><a href="add-task.php">Add new task</a></p>
-					<p class='small-text'>--Your new task</p>
-					<p><a href="ordering.php">Define your own order of display</a></p>
-					<p class='small-text'>--Define the order of displaying your tasks</p>
-					<p><a href="finished.php">Finished tasks</a></p>
-					<p class='small-text'>--An archive of tasks that you have finished</p>
-				</div>
-			
-				<div id="info" class="small-container">
-					<div id="data">
+			<div class="small-container" id="info" >
+				<div id="data">
 
-					</div>
-					<div id="instr">
-						Click on "<span class='highlight-less'>Do it!</span>" to make progress<br>
-						Click on "<span class='highlight-less'>Undo</span>" to make the last unit as undone<br>
-						Click on task title to see task detail<br>
-						Click on 'remove' to remove task<br>
-						Click on 'done' to mark task as done
-					</div>
+				</div>
+				<div id="instr">
+					Click on "<span class='highlight-less'>Do it!</span>" to make progress<br>
+					Click on "<span class='highlight-less'>Undo</span>" to make the last unit as undone<br>
+					Click on task title to see task detail<br>
+					Click on 'remove' to remove task<br>
+					Click on 'done' to mark task as done
 				</div>
 			</div>
 			
