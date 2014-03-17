@@ -30,6 +30,8 @@ function login(){
 	var email = $("#login-form input[name=email]").val();
 	var password = $('#login-form input[name=password]').val();
 	$.get('backend.php', {action: "login", email: email, password: password}, function(data){
+		console.log(data['status']);
+		console.log(data['error']);
 		if (data['status'] == 'ok') {
 			//hide login form and display home page
 			$("#login").hide();

@@ -3,6 +3,7 @@ session_save_path("sess");
 session_start();
 
 header('Content-Type: application/json');
+require 'config.inc';
 
 if (isset($_REQUEST['action'])) {
 	if ($_REQUEST['action'] == 'auth') {
@@ -49,8 +50,10 @@ if (isset($_REQUEST['action'])) {
 function connectToDatabase($db_name, $db_user, $db_password){
         $dbconn = pg_connect("host=localhost port=5432 dbname=$db_name user=$db_user password=$db_password");
         if(!$dbconn){
-            echo "Aw, Snap!";
-            exit;      
+        	$reply = array();
+        	$reply['status'] = "Aw, Snap!";
+            //echo "Aw, Snap!";
+            print json_encode($reply);    
         }
 
         return $dbconn; 
