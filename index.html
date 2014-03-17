@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>To-do Manager</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	
+	<body>			
+		<header>
+			<div class='header-container'>
+				<div id='utility'>
+				<?php
+					switch($page) {
+						case "login":
+							break;
+						case "signup":
+							break;
+						default:
+							echo("<a href='account.php'>My account</a>
+									<a href='$currentURL?action=logout'>Log out</a>");
+					}
+				?>
+				</div>
+				
+				<div id='title'>
+					<h1>To-do Manager</h1>
+				</div>
+
+				<nav>
+
+				</nav>
+			</div> <!-- end of header-container -->
+		</header>
+		
+		<div id='content' class="container">
+			<!-- navagation to change sort methods -->	
+			<div id='orderby' class='link'>
+				Order by: 
+				<a href="home.php?sort=createdate">Create Date</a>
+				<a href="home.php?sort=priority">Priority</a>
+				<a href="home.php?sort=timeunit">Time Units</a>
+			</div>
+			
+			<div class='tasks'>
+
+			</div> <!-- end of tasks -->
+			
+			<div id=container-col>
+				<div id="options" class="small-container">
+					<p><a href="add-task.php">Add new task</a></p>
+					<p class='small-text'>--Your new task</p>
+					<p><a href="ordering.php">Define your own order of display</a></p>
+					<p class='small-text'>--Define the order of displaying your tasks</p>
+					<p><a href="finished.php">Finished tasks</a></p>
+					<p class='small-text'>--An archive of tasks that you have finished</p>
+				</div>
+			
+				<div id="info" class="small-container">
+					<div id="data">
+
+					</div>
+					<div id="instr">
+						Click on "<span class='highlight-less'>Do it!</span>" to make progress<br>
+						Click on "<span class='highlight-less'>Undo</span>" to make the last unit as undone<br>
+						Click on task title to see task detail<br>
+						Click on 'remove' to remove task<br>
+						Click on 'done' to mark task as done
+					</div>
+				</div>
+			</div>
+			
+		</div> <!-- end of content -->
+		
+		<footer>
+			<p>@copyright 2014</p>
+		</footer>
+	</body>
+</html>
