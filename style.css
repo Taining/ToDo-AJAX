@@ -273,6 +273,7 @@ nav #current-page a {
 	padding: 1 0 2em 0;
 }
 .small-container {
+	position: relative;
 	padding: 1em 3em;
 }
 #options {
