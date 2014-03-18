@@ -169,24 +169,21 @@
 
 	<div id='content' class="container">
 		<div class='tasks'>
+			<ul>
+				
+			</ul>
 		</div>
 		
+		<!-- data and instructions -->
 		<div id=container-col>
 			<div id="options" class="small-container">
-				<p><a href="add-task.php">Add new task</a></p>
-				<p class='small-text'>--Your new task</p>
-				<p><a href="ordering.php">Define your own order of display</a></p>
-				<p class='small-text'>--Define the order of displaying your tasks</p>
-				<p><a href="finished.php">Finished tasks</a></p>
-				<p class='small-text'>--An archive of tasks that you have finished</p>
+				<div id="data">
+					Rate: <span class='highlight'>2</span> units per day (One unit is 30 mins work)<br>
+					Remaining: <span class='highlight'>2</span> days work
+				</div>
 			</div>
 		
-			<div id="info" class="small-container">
-				<div id="data">
-					Rate: <span class='highlight'>$rate</span> units per day (One unit is 30 mins work)<br>
-					<span class='highlight'>$remainingDays</span> days work
-				</div>
-				
+			<div id="info" class="small-container">		
 				<div id="instr">
 					Click on "<span class='highlight-less'>Do it!</span>" to make progress<br>
 					Click on "<span class='highlight-less'>Undo</span>" to make the last unit as undone<br>
@@ -196,6 +193,7 @@
 				</div>
 			</div>
 		</div>
+		<!-- end of data and instructions -->
 	</div>
 	
 

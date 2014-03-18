@@ -84,6 +84,22 @@ if (isset($_REQUEST['action'])) {
 
 
 
+	} else if($_REQUEST['action'] == "gettasks"){
+		$reply=array();
+		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
+		$get_tasks_query="SELECT * FROM tasks WHERE uid=$userid AND progress<total ORDER BY taskid";
+		$result = pg_query($dbconn, $query);
+		while ($row = pg_fetch_array($result)) {
+			/*
+			$taskid = $row['taskid'];
+			$dscrp = $row['dscrp'];
+			$total = $row['total'];
+			$progress = $row['progress'];
+			$createtime = $row['createtime'];
+			*/
+			$reply['tasks'][]=$row;
+		}
+		print json_encode($reply);
 	}
 }
 

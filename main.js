@@ -15,6 +15,8 @@ $(function(){
 	$("#gobackButton").on("click", function(){
 		switchLoginAndSignup(0);
 	});
+	
+	var tasks = getTasks();
 });
 
 function checkAuthentication(){
@@ -88,6 +90,14 @@ function signup(){
 				}
 		});
 	}
+}
+
+function getTasks() {
+	var tasks;
+	$.getJSON("backend.php", {action: "gettasks"}, function(data){
+		tasks = data['tasks'];
+	});
+	return tasks;
 }
 
 
