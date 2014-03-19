@@ -16,7 +16,6 @@ $(function(){
 		switchLoginAndSignup(0);
 	});
 	
-	var tasks = getTasks();
 });
 
 function checkAuthentication(){
@@ -24,7 +23,9 @@ function checkAuthentication(){
 		if (data['auth'] == 'no') {
 			$("#login").show();
 		} else {
-
+			$("#login").hide();
+			$("#signup").hide();
+			getTasks();
 		}
 	});
 }
@@ -48,6 +49,7 @@ function login(){
 		if (data['status'] == 'ok') {
 			//hide login form and display home page
 			$("#login").hide();
+			getTasks();
 		} else {
 			//display error message
 			$("#login-form .error").show();
@@ -93,11 +95,37 @@ function signup(){
 }
 
 function getTasks() {
-	var tasks;
 	$.getJSON("backend.php", {action: "gettasks"}, function(data){
 		tasks = data['tasks'];
+		generateTasksView(tasks);
 	});
-	return tasks;
+}
+
+function generateTasksView(tasks) {
+	var html = "<ul>";
+	for (var i = 0; i < tasks.length; i++) {
+		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']+"</span>(<a>remove</a><a>done</a>)</span>";
+		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
+		html += "<table border=1><tr>";
+		for (var j = 0; j < tasks[i]['total']; j++) {
+			if(j < tasks[i]['progress'] - 1) {
+				html += "<td class='completed'></td>";
+			} else if (j == tasks[i]['progress'] - 1) {
+				html += "<td class='last'>"
+							+ "<form><input type='submit' name='submit' value='Undo' class='btn'></form>";
+					  		+ "</td>";
+			} else if (j == tasks[i]['progress']){
+				html += "<td class='next'>"
+							+ "<form><input type='submit' name='submit' value='Do it!' class='btn'></form>";
+					  		+ "</td>";
+			} else {
+				html += "<td class='uncompleted'></td>";
+			}
+		}
+		html += "</table></li>";
+	}
+	html += "</ul>";
+	$("#tasks").html(html);
 }
 
 
