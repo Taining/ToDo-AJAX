@@ -1,6 +1,5 @@
 $(function(){
 	checkAuthentication();
-
 	$("#loginButton").on("click", function(){
 		login();
 	});
@@ -16,6 +15,11 @@ $(function(){
 		switchLoginAndSignup(0);
 	});
 	
+	$("#task-form input[name=undo]").on("click", function(){
+		alert("get here");
+		var taskid = this.id.substr(4,4);
+		undo(taskid);
+	});
 });
 
 function checkAuthentication(){
@@ -26,6 +30,7 @@ function checkAuthentication(){
 			$("#login").hide();
 			$("#signup").hide();
 			getTasks();
+			setup();
 		}
 	});
 }
@@ -50,6 +55,7 @@ function login(){
 			//hide login form and display home page
 			$("#login").hide();
 			getTasks();
+			setup();
 		} else {
 			//display error message
 			$("#login-form .error").show();
@@ -106,26 +112,40 @@ function generateTasksView(tasks) {
 	for (var i = 0; i < tasks.length; i++) {
 		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']+"</span>(<a>remove</a><a>done</a>)</span>";
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
-		html += "<table border=1><tr>";
+		html += "<form id='task-form'><table border=1><tr>";
 		for (var j = 0; j < tasks[i]['total']; j++) {
 			if(j < tasks[i]['progress'] - 1) {
 				html += "<td class='completed'></td>";
 			} else if (j == tasks[i]['progress'] - 1) {
 				html += "<td class='last'>"
-							+ "<form><input type='submit' name='submit' value='Undo' class='btn'></form>";
+							+ "<input type='button' name='undo' id='undo"+tasks[i]['taskid']+"' value='Undo' class='undo-btn'>";
 					  		+ "</td>";
 			} else if (j == tasks[i]['progress']){
 				html += "<td class='next'>"
-							+ "<form><input type='submit' name='submit' value='Do it!' class='btn'></form>";
+							+ "<input type='button' id='doit' value='Do it!' class='btn'>";
 					  		+ "</td>";
 			} else {
 				html += "<td class='uncompleted'></td>";
 			}
 		}
-		html += "</table></li>";
+		html += "</table></form></li>";
 	}
 	html += "</ul>";
 	$("#tasks").html(html);
+}
+
+function undo(taskid) {
+	$.get("backend.php", {action: "undo", taskid:taskid}, function(data){ });
+	// update view
+	getTasks();
+}
+
+function setup() {
+	$("#task-form input[name=undo]").on("click", function(){
+		alert("get here");
+		var taskid = this.id.substr(4,4);
+		undo(taskid);
+	});
 }
 
 

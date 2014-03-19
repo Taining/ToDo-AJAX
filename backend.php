@@ -100,7 +100,22 @@ if (isset($_REQUEST['action'])) {
 			$reply['tasks'][]=$row;
 		}
 		print json_encode($reply);
-	}
+		
+	} else if($_REQUEST['action'] == "undo") {
+		$reply=array();
+		$taskid = $_REQUEST['taskid'];
+		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
+		
+		$get_progress_query = "SELECT progress FROM tasks WHERE taskid=$taskid";
+		$result = pg_query($dbconn, $get_progress_query);
+
+		$row = pg_fetch_array($result);
+		$progress = $row['progress'];
+		$progress = $progress - 1;
+	
+		$update_progress_query = "UPDATE tasks SET progress = $progress WHERE taskid=$taskid";
+		pg_query($dbconn, $update_progress_query);
+	}	
 }
 
 
