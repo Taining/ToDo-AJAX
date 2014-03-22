@@ -106,19 +106,23 @@ function displayTasks(){
 function generateTasksView(tasks) {
 	var html = "<ul>";
 	for (var i = 0; i < tasks.length; i++) {
-		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']+"</span>(<a>remove</a>&nbsp;<a>done</a>)</span>";
+		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']
+				+"</span>(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
+				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>)</span>";
+				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
+		
 		html += "<form class='task-form'><table border=1><tr>";
 		for (var j = 0; j < tasks[i]['total']; j++) {
 			if(j < tasks[i]['progress'] - 1) {
 				html += "<td class='completed'></td>";
 			} else if (j == tasks[i]['progress'] - 1) {
 				html += "<td class='last'>"
-							+ "<input type='button' name='undo' onclick='undoTask("+tasks[i]['taskid']+")' value='Undo' class='undo-btn'>";
+							+ "<input type='button' name='undo' onclick='undoTask("+tasks[i]['taskid']+")' value='Undo' class='btn'>";
 					  		+ "</td>";
 			} else if (j == tasks[i]['progress']){
 				html += "<td class='next'>"
-							+ "<input type='button' id='doit' value='Do it!' class='btn'>";
+							+ "<input type='button' name='doit' onclick='doTask("+tasks[i]['taskid']+")' value='Do it!' class='btn'>";
 					  		+ "</td>";
 			} else {
 				html += "<td class='uncompleted'></td>";
@@ -137,6 +141,23 @@ function undoTask(taskid) {
 	getTasks();
 }
 
+function doTask(taskid) {
+	$.get("backend.php", {action: "doit", taskid:taskid}, function(data){ });
+	// update view
+	getTasks();
+}
+
+function deleteTask(taskid) {
+	$.get("backend.php", {action: "delete", taskid:taskid}, function(data){ });
+	// update view
+	getTasks();
+}
+
+function markAsDone(taskid) {
+	$.get("backend.php", {action: "markdone", taskid:taskid}, function(data){ });
+	// update view
+	getTasks();
+}
 
 
 

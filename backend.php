@@ -87,8 +87,11 @@ if (isset($_REQUEST['action'])) {
 	} else if($_REQUEST['action'] == "gettasks"){
 		$reply=array();
 		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
-		$get_tasks_query="SELECT * FROM tasks WHERE uid=$_SESSION[user] AND progress<total ORDER BY taskid";
-		$result = pg_query($dbconn, $get_tasks_query);
+		
+		$get_tasks_query="SELECT * FROM tasks WHERE uid=$1 ORDER BY taskid";
+		$result = pg_prepare($dbconn, "get_tasks", $get_tasks_query);
+		$result = pg_execute($dbconn, "get_tasks", array($_SESSION['user']));
+		
 		while ($row = pg_fetch_array($result)) {
 			/*
 			$taskid = $row['taskid'];
@@ -103,19 +106,83 @@ if (isset($_REQUEST['action'])) {
 		
 	} else if($_REQUEST['action'] == "undo") {
 		$reply=array();
-		$taskid = $_REQUEST['taskid'];
 		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
 		
-		$get_progress_query = "SELECT progress FROM tasks WHERE taskid=$taskid";
-		$result = pg_query($dbconn, $get_progress_query);
+		$get_progress_query = "SELECT progress FROM tasks WHERE taskid=$1";
+		$result = pg_prepare($dbconn, "get_progress", $get_progress_query);
+		$result = pg_execute($dbconn, "get_progress", array($_REQUEST['taskid']));
 
 		$row = pg_fetch_array($result);
 		$progress = $row['progress'];
 		$progress = $progress - 1;
 	
-		$update_progress_query = "UPDATE tasks SET progress = $progress WHERE taskid=$taskid";
-		pg_query($dbconn, $update_progress_query);
-	}	
+		$update_progress_query = "UPDATE tasks SET progress = $1 WHERE taskid=$2";
+		$result = pg_prepare($dbconn, "update_progress", $update_progress_query);
+		$result = pg_execute($dbconn, "update_progress", array($progress, $_REQUEST['taskid']));
+		
+		$reply['status'] = "ok";
+		print json_encode($reply);
+		
+	} else if($_REQUEST['action'] == "doit") {
+		$reply=array();
+		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
+		
+		$get_progress_query = "SELECT progress, uid FROM tasks WHERE taskid=$1";
+		$result = pg_prepare($dbconn, "get_progress", $get_progress_query);
+		$result = pg_execute($dbconn, "get_progress", array($_REQUEST['taskid']));
+		$row = pg_fetch_row($result);
+		
+		// progress++
+		$progress = $row[0];
+		$progress += 1;
+		$update_query = "UPDATE tasks SET progress=$1 WHERE taskid=$2";
+		$result = pg_prepare($dbconn, "update_progress", $update_query);
+		$result = pg_execute($dbconn, "update_progress", array($progress, $_REQUEST['taskid']));
+		
+		// done++
+		$uid = $row[1];
+		$get_done_query = "SELECT done FROM appuser WHERE uid=$1";
+		$result = pg_prepare($dbconn, "get_done", $get_done_query);
+		$result = pg_execute($dbconn, "get_done", array($_SESSION['user']));
+		
+		$row = pg_fetch_row($result);
+		$done = $row[0];
+		$done += 1;
+		$update_query = "UPDATE appuser SET done=$1 WHERE uid=$2";
+		$result = pg_prepare($dbconn, "update_done", $update_query);
+		$result = pg_execute($dbconn, "update_done", array($done, $_SESSION['user']));
+		
+		$reply['status'] = "ok";
+		print json_encode($reply);
+		
+	} else if($_REQUEST['action'] == "delete") {
+		$reply=array();	
+		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
+		
+		$delete_task_query = "DELETE FROM tasks WHERE taskid=$1;";
+		$delete_result = pg_prepare($dbconn, "delete_task", $delete_task_query);
+		$delete_result = pg_execute($dbconn, "delete_task", array($_REQUEST['taskid']));
+		
+		$reply['status'] = "ok";
+		print json_encode($reply);
+		
+	} else if($_REQUEST['action'] == "markdone") {
+		$reply=array();	
+		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
+		
+		$total_query = "SELECT total FROM tasks WHERE uid=$1 AND taskid=$2";
+		$total_result = pg_prepare($dbconn, "get_total", $total_query);
+		$total_result = pg_execute($dbconn, "get_total", array($_SESSION['user'], $_REQUEST['taskid']));
+		$row = pg_fetch_array($total_result);
+
+		$done_task_query = "UPDATE tasks SET progress = $1 WHERE taskid = $2;";
+		$done_result = pg_prepare($dbconn, "done_task", $done_task_query);
+		$done_result = pg_execute($dbconn, "done_task", array($row['total'], $_REQUEST['taskid']));
+		
+		$reply['status'] = "ok";
+		print json_encode($reply);
+		
+	}
 }
 
 
@@ -129,16 +196,16 @@ if (isset($_REQUEST['action'])) {
 
 
 function connectToDatabase($db_name, $db_user, $db_password){
-        $dbconn = pg_connect("host=localhost port=5432 dbname=$db_name user=$db_user password=$db_password");
-        if(!$dbconn){
-        	$reply = array();
-        	$reply['status'] = "Aw, Snap!";
-            //echo "Aw, Snap!";
-            print json_encode($reply);    
-        }
+	$dbconn = pg_connect("host=localhost port=5432 dbname=$db_name user=$db_user password=$db_password");
+	if(!$dbconn){
+		$reply = array();
+		$reply['status'] = "Aw, Snap!";
+		//echo "Aw, Snap!";
+		print json_encode($reply);    
+	}
 
-        return $dbconn; 
-    }
+	return $dbconn; 
+}
 
 
 

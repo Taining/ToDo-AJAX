@@ -175,7 +175,7 @@ nav li a:hover {
 	background: #ededed;
 	color: #751B05;
 }
-nav #current-page a {
+nav #current-page {
 	background: #ededed;
 	color: #751B05;
 }
