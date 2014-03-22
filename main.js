@@ -107,8 +107,8 @@ function generateTasksView(tasks) {
 	var html = "<ul>";
 	for (var i = 0; i < tasks.length; i++) {
 		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']
-				+"</span>(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
-				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>)</span>";
+				+"&nbsp</span>(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
+				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>)</span>&nbsp&nbsp";
 				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
 		

@@ -204,6 +204,28 @@
 		<!-- end of data and instructions -->
 	</div>
 	
+	<div id="add-task" class="container">
+		<form method="POST">
+			<table class="form" id="add-task">
+			<tr>
+				<td><div class="error" hidden ></div></td>
+			</tr>
+			<tr>
+				<td><label>Task Description:<br><input type="text" name="dscrp"></label></td>
+			</tr>
+			<tr>
+				<td><label>Details:<br><textarea name='details' cols=70 rows=6></textarea></label></td>
+			</tr>
+			<tr>
+				<td><label>Estimated total time (30mins as one unit):<br><input type="text" name="total"></label></td>
+			</tr>
+			<tr>
+				<td><input type="submit" name="submit" class="submit" value="Add task"></td>
+			</tr>
+			</table>
+		</form>
+	</div>
+	
 
 	<footer>
 		<p>@copyright 2014</p>
