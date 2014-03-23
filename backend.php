@@ -182,6 +182,29 @@ if (isset($_REQUEST['action'])) {
 		$reply['status'] = "ok";
 		print json_encode($reply);
 		
+	} else if($_REQUEST['action'] == "addtask") {
+		$reply=array();	
+		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
+		
+		// get new taskid
+		$query = "SELECT MAX(taskid) FROM tasks;";
+		$result=pg_query($dbconn, $query);
+		$row = pg_fetch_row($result);
+		$taskid = $row[0] + 1;
+		
+		// assign ordering value to the new task
+		$query = "SELECT COUNT(*) FROM tasks;";
+		$result=pg_query($dbconn, $query);
+		$row = pg_fetch_row($result);
+		$ordering = $row[0] + 1;
+		
+		// add task
+		$query = "INSERT INTO tasks(uid, taskid, dscrp, details, total, progress, ordering, createtime, priority) VALUES($1, $2, $3, $4, $5, 0, $6, $7, $8)";
+		$result = pg_prepare($dbconn, "my_query", $query);
+		$result = pg_execute($dbconn, "my_query", array($_SESSION['user'], $taskid, $_REQUEST['dscrp'], $_REQUEST['details'], $_REQUEST['total'], $ordering, date("Y-m-d"), $ordering));
+		
+		$reply['status'] = "ok";
+		print json_encode($reply);		
 	}
 }
 

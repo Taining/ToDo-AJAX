@@ -14,6 +14,13 @@ $(function(){
 	$("#gobackButton").on("click", function(){
 		switchLoginAndSignup(0);
 	});
+	$("#addtask-option").on("click", function(){
+		$("#add-task").show();
+		$("#login").hide();
+		$("#signup").hide();
+		$("#content").hide();		
+	});
+
 });
 
 function checkAuthentication(){
@@ -157,6 +164,28 @@ function markAsDone(taskid) {
 	$.get("backend.php", {action: "markdone", taskid:taskid}, function(data){ });
 	// update view
 	getTasks();
+}
+
+function addTask() {
+	var dscrp 	= $("#addtask-form input[name=dscrp]").val();
+	var details = $("#addtask-form textarea[name=details]").val();
+	var total 	= $("#addtask-form input[name=total]").val();
+	
+	if (!dscrp){
+		$("#addtask-form .error").show();
+		$("#addtask-form .error").html('Description and estimated total time cannot be empty.');
+	} else if (!total) {
+		$("#addtask-form .error").show();
+		$("#addtask-form .error").html('Description and estimated total time cannot be empty.');
+	} else if (!$.isNumeric(total)){
+		$("#addtask-form .error").show();
+		$("#addtask-form .error").html('Please enter a numeric time units');			
+	} else {
+		if(!details) details = "";
+		$.get("backend.php", {action: "addtask", dscrp: dscrp, details: details, total: total}, function(data){ });	
+		$("#add-task").hide();
+		displayTasks();
+	}	
 }
 
 
