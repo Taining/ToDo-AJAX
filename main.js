@@ -96,20 +96,6 @@ function signup(){
 	}
 }
 
-function getTasks() {
-	$.getJSON("backend.php", {action: "gettasks"}, function(data){
-		var tasks = data['tasks'];
-		generateTasksView(tasks);
-	});
-}
-
-function displayTasks(){
-	$("#login").hide();
-	$("#signup").hide();
-	$("#content").show();
-	getTasks();
-}
-
 function generateTasksView(tasks) {
 	var html = "<ul>";
 	for (var i = 0; i < tasks.length; i++) {
@@ -139,6 +125,21 @@ function generateTasksView(tasks) {
 	}
 	html += "</ul>";
 	$(".tasks").html(html);
+}
+
+function getTasks() {
+	$.getJSON("backend.php", {action: "gettasks"}, function(data){
+		console.log(data['tasks']);
+		var tasks = data['tasks'];
+		generateTasksView(tasks);
+	});
+}
+
+function displayTasks(){
+	$("#login").hide();
+	$("#signup").hide();
+	$("#content").show();
+	getTasks();
 }
 
 function undoTask(taskid) {
