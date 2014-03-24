@@ -116,7 +116,7 @@ function generateTasksView(tasks) {
 		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']
 				+"&nbsp</span>(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
 				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>&nbsp"
-				+"<a onclick='edit("+tasks[i]['taskid']+")'>edit</a>)</span>&nbsp&nbsp";
+				+"<a onclick='openEdit("+tasks[i]['taskid']+")'>edit</a>)</span>&nbsp&nbsp";
 				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
 		
@@ -206,8 +206,9 @@ function addTask() {
 	}	
 }
 
-function edit(taskid){
+function openEdit(taskid){
 	$("#open-edit-"+taskid).slideDown();
+	// $("#open-edit-"+taskid).css("display", "block");
 }
 
 
