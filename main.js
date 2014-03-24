@@ -1,5 +1,6 @@
 $(function(){
 	checkAuthentication();
+
 	$("#loginButton").on("click", function(){
 		login();
 	});
@@ -11,15 +12,18 @@ $(function(){
 	$("#signupButton").on("click", function(){
 		signup();
 	});
+
 	$("#gobackButton").on("click", function(){
 		switchLoginAndSignup(0);
 	});
+
 	$("#nav-home").on("click", function(){
 		// update nav bar
 		$("#nav-home").css({"background":"#ededed", "color":"#751B05"});
 		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});
 		checkAuthentication();	
 	});
+
 	$("#nav-addtask").on("click", function() {
 		$.get("backend.php", {action: "auth"}, function(data){
 			if (data['auth'] == 'no') {
@@ -34,6 +38,11 @@ $(function(){
 				$("#content").hide();			
 			}
 		});	
+	});
+
+	$("#account-button").on("click", function(){
+		getAccount();
+		$("#update-account").show();
 	});		
 });
 
@@ -211,6 +220,26 @@ function openEdit(taskid){
 	// $("#open-edit-"+taskid).css("display", "block");
 }
 
+function getAccount(){
+	$.get("backend.php", {action: "getaccount"}, function(data) {
+		console.log(data['status']);
+		console.log(data);
+		if (data['status'] == 'ok') {
+			$("#update-account input[name=fname]").val(data['fname']);
+			$("#update-account input[name=lname]").val(data['lname']);
+			$("#update-account input[name=email]").val(data['email']);
+			$("#update-account select[name=year]").val(data['year']);
+			$("#update-account select[name=month]").val(data['month']);
+			$("#update-account select[name=day]").val(data['day']);
+			$("#update-account input[name=sex][value="+data['sex']+"]").prop("checked", true);
+			if (data['news'] == 't') {
+				$("#update-account input[name=news]").prop("checked", true);
+			} else {
+				$("#update-account input[name=news]").prop("checked", false);
+			}
+		}
+	});
+}
 
 
 

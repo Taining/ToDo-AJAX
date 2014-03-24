@@ -204,16 +204,35 @@ if (isset($_REQUEST['action'])) {
 		$result = pg_execute($dbconn, "my_query", array($_SESSION['user'], $taskid, $_REQUEST['dscrp'], $_REQUEST['details'], $_REQUEST['total'], $ordering, date("Y-m-d"), $ordering));
 		
 		$reply['status'] = "ok";
-		print json_encode($reply);		
+		print json_encode($reply);	
+
 	} else if($_REQUEST['action'] == "getaccount"){
+		$reply = array();
 		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
 
 		//get user account information
 		$result = pg_query($dbconn, "SELECT * FROM appuser WHERE uid = $_SESSION[user]");
 		$row = pg_fetch_array($result);
-		$row['status'] = 'ok';
+		
+		//compute year, month and day
+		$birthday = explode("-", $row['birthday']);
+		$year = intval($birthday[0]);
+		$month = intval($birthday[1]);
+		$day = intval($birthday[2]);
 
-		print json_encode($row);
+		//construct reply
+		$reply['status'] = 'ok';
+		$reply['fname'] = $row['fname'];
+		$reply['lname'] = $row['lname'];
+		$reply['email'] = $row['email'];
+		$reply['year'] = $year;
+		$reply['month'] = $month;
+		$reply['day'] = $day;
+		$reply['sex'] = $row['sex'];
+		$reply['news'] = $row['news'];
+
+		print json_encode($reply);
+		
 	} else if($_REQUEST['action'] == "updateaccount"){
 		$reply = array();
 
