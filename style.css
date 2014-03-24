@@ -137,7 +137,7 @@ footer {
 	background: #751B05;
 	text-align: center;
 	color:#ededed;
-	width: 105%;
+	width: 100%;
 }
 footer p {
 	padding: 0.5em 0 0.5em 0;
@@ -182,7 +182,7 @@ nav #current-page {
 
 .header-container {
 	position:relative;
-	margin:-1em -1em 0 -1em;
+	/*margin:-1em -1em 0 -1em;*/
 	overflow: hidden;
 	background: #751B05 url(images/overlay.png) repeat;
 	text-align: center;
