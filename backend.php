@@ -214,6 +214,69 @@ if (isset($_REQUEST['action'])) {
 		$row['status'] = 'ok';
 
 		print json_encode($row);
+	} else if($_REQUEST['action'] == "updateaccount"){
+		$reply = array();
+
+		//validate account information
+		if (!filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL)) {
+			$reply['status'] = 'no';
+			$reply['error'] = 'Please enter a valid email.';
+			print json_encode($reply);
+		} else if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
+			$reply['status'] = 'no';
+			$reply['error'] = 'Please enter a valid birthday.';
+			print json_encode($reply);
+		} else {
+			$dbconn = connectToDatabase($db_name, $db_user, $db_password);
+
+			//update user account information
+			$birthday = $_REQUEST['year'] . '-' . $_REQUEST['month'] . '-' . $_REQUEST['day'];
+			$update_user_query = "UPDATE appuser SET (email, fname, lname, birthday, news, sex) = ($1, $2, $3, $4, $5, $6) WHERE uid = $7;";
+			$result = pg_prepare($dbconn, "update_user", $update_user_query);
+			$result = pg_execute($dbconn, "update_user", array($_REQUEST['email'], $_REQUEST['fname'], $_REQUEST['lname'], $birthday, $_REQUEST['news'], $_REQUEST['sex'], $_SESSION['user']));
+
+			if ($result) {
+				$reply['status'] = 'ok';
+				$reply['msg'] = "Your information has been updated.";
+			} else {
+				$reply['status'] = 'no';
+				$reply['error'] = "Update account information failed.";
+ 			}
+		}
+		print json_encode($reply);
+		
+	} else if($_REQUEST['action'] == "updatepassword"){
+		$reply = array('status' => 'no');
+
+		//fetch user old password
+		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
+		$result = pg_query($dbconn, "SELECT * FROM appuser WHERE uid = $_SESSION[user]");
+		$row = pg_fetch_array($result);
+		$password = $row['password'];
+
+		//validate password form
+		if (md5($_POST['old-password']) != $password) {
+			$reply['error'] = "Please enter correct old password.";
+		} else {
+			//update user password
+			$update_pwd_query = "UPDATE appuser SET (password) = ($1) WHERE uid = $2;";
+			$result = pg_prepare($dbconn, "update_pwd", $update_pwd_query);
+			$result = pg_execute($dbconn, "update_pwd", array(md5($_REQUEST['new-password']), $_SESSION['user']));
+			
+			if ($result) {
+				$reply['status'] = 'ok';
+				$reply['msg'] = "Your password has been updated.";
+			} else {
+				$reply['error'] = "Update password failed.";
+			}
+		}
+		print json_encode($reply);
+
+	} else if($_REQUEST['action'] == "logout"){
+		unset($_SESSION['user']);
+		$reply = array('status' => 'ok');
+
+		print json_encode($reply);
 	}
 }
 
