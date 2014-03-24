@@ -14,17 +14,40 @@ $(function(){
 	$("#gobackButton").on("click", function(){
 		switchLoginAndSignup(0);
 	});
-	$("#addtask-option").on("click", function(){
+	$("#nav-home").on("click", function(){
 		// update nav bar
-		
+		$("#nav-home").css({"background":"#ededed", "color":"#751B05"});
+		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});
+		checkAuthentication();	
 	
 		// switch view
-		$("#add-task").show();
-		$("#login").hide();
-		$("#signup").hide();
-		$("#content").hide();		
+		if($(this).val() == "Add Task") {
+			$("#add-task").show();
+			$("#login").hide();
+			$("#signup").hide();
+			$("#content").hide();
+		} else {
+			$("#add-task").hide();
+			$("#login").hide();
+			$("#signup").hide();
+			$("#content").show();			
+		}	
 	});
-
+	$("#nav-addtask").on("click", function() {
+		$.get("backend.php", {action: "auth"}, function(data){
+			if (data['auth'] == 'no') {
+				
+			} else {
+				$("#nav-addtask").css({"background":"#ededed", "color":"#751B05"});		
+				$("#nav-home").css({"background":"#751B05", "color":"#ededed"});
+		
+				$("#add-task").show();
+				$("#login").hide();
+				$("#signup").hide();
+				$("#content").hide();			
+			}
+		});	
+	});		
 });
 
 function checkAuthentication(){
