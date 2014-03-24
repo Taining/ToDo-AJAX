@@ -19,19 +19,6 @@ $(function(){
 		$("#nav-home").css({"background":"#ededed", "color":"#751B05"});
 		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});
 		checkAuthentication();	
-	
-		// switch view
-		if($(this).val() == "Add Task") {
-			$("#add-task").show();
-			$("#login").hide();
-			$("#signup").hide();
-			$("#content").hide();
-		} else {
-			$("#add-task").hide();
-			$("#login").hide();
-			$("#signup").hide();
-			$("#content").show();			
-		}	
 	});
 	$("#nav-addtask").on("click", function() {
 		$.get("backend.php", {action: "auth"}, function(data){
@@ -128,9 +115,12 @@ function generateTasksView(tasks) {
 	for (var i = 0; i < tasks.length; i++) {
 		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']
 				+"&nbsp</span>(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
-				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>)</span>&nbsp&nbsp";
+				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>&nbsp"
+				+"<a onclick='edit("+tasks[i]['taskid']+")'>edit</a>)</span>&nbsp&nbsp";
 				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
+		
+		html += "<div id='open-edit-" + tasks[i]['taskid'] +"' hidden>" + $("#edit-task").html() + "</div>";
 		
 		html += "<form class='task-form'><table border=1><tr>";
 		for (var j = 0; j < tasks[i]['total']; j++) {
@@ -214,6 +204,10 @@ function addTask() {
 		$("#add-task").hide();
 		displayTasks();
 	}	
+}
+
+function edit(taskid){
+	$("#open-edit-"+taskid).slideDown();
 }
 
 

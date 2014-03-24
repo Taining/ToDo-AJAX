@@ -225,6 +225,28 @@
 			</table>
 		</form>
 	</div>
+	
+	<div id="edit-task" class="container">
+		<form id="edittask-form" method="POST">
+			<table class="form">
+			<tr>
+				<td><div class="error" hidden ></div></td>
+			</tr>
+			<tr>
+				<td><label>Task Description:<br><input type="text" name="dscrp"></label></td>
+			</tr>
+			<tr>
+				<td><label>Details:<br><textarea name='details' cols=70 rows=6></textarea></label></td>
+			</tr>
+			<tr>
+				<td><label>Estimated total time (30mins as one unit):<br><input type="text" name="total"></label></td>
+			</tr>
+			<tr>
+				<td><input type="button" onclick="addTask()" name="submit" class="submit" value="Add task"></td>
+			</tr>
+			</table>
+		</form>
+	</div>
 
 	<div id="account">
 		<h2>My Account</h2>
