@@ -205,6 +205,15 @@ if (isset($_REQUEST['action'])) {
 		
 		$reply['status'] = "ok";
 		print json_encode($reply);		
+	} else if($_REQUEST['action'] == "getaccount"){
+		$dbconn = connectToDatabase($db_name, $db_user, $db_password);
+
+		//get user account information
+		$result = pg_query($dbconn, "SELECT * FROM appuser WHERE uid = $_SESSION[user]");
+		$row = pg_fetch_array($result);
+		$row['status'] = 'ok';
+
+		print json_encode($row);
 	}
 }
 
