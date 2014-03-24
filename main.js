@@ -15,6 +15,10 @@ $(function(){
 		switchLoginAndSignup(0);
 	});
 	$("#addtask-option").on("click", function(){
+		// update nav bar
+		
+	
+		// switch view
 		$("#add-task").show();
 		$("#login").hide();
 		$("#signup").hide();
