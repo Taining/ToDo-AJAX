@@ -129,7 +129,7 @@ function generateTasksView(tasks) {
 				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
 		
-		html += "<div id='open-edit-" + tasks[i]['taskid'] +"' hidden>" + $("#edit-task").html() + "</div>";
+		html += "<div class='edit-box' id='open-edit-" + tasks[i]['taskid'] +"' hidden>" + $("#edit-task").html() + "</div>";
 		
 		html += "<form class='task-form'><table border=1><tr>";
 		for (var j = 0; j < tasks[i]['total']; j++) {

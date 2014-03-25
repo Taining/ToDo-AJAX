@@ -270,7 +270,9 @@ nav #current-page {
 	text-align: right;
 }
 .tasks li {
-	height: 100px;
+	position: relative;
+	
+	/* height: 100px; */
 }
 .dscrp {
 	text-decoration:none;
@@ -365,4 +367,8 @@ nav #current-page {
 }
 #contact a {
 	text-decoration: none
+}
+
+.edit-box {
+	position: relative;
 }
