@@ -125,7 +125,7 @@ function generateTasksView(tasks) {
 		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']
 				+"&nbsp</span>(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
 				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>&nbsp"
-				+"<a onclick='openEdit("+tasks[i]['taskid']+")'>edit</a>)</span>&nbsp&nbsp";
+				+"<a onclick='openEdit("+tasks[i]['taskid']+")'>info</a>)</span>&nbsp&nbsp";
 				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
 		
@@ -218,7 +218,9 @@ function addTask() {
 
 function openEdit(taskid){
 	$("#open-edit-"+taskid).slideDown();
-	// $("#open-edit-"+taskid).css("display", "block");
+	//$("#open-edit-"+taskid+ " table").css("border", "none");
+	// need to fetch info from backend/database
+	// $.getJSON("backend.php"
 }
 
 function getAccount(){

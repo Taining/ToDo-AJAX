@@ -376,3 +376,7 @@ nav #current-page {
 .edit-box {
 	position: relative;
 }
+
+.edit-box table {
+	border: 0px;
+}
