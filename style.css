@@ -274,6 +274,10 @@ nav #current-page {
 	
 	/* height: 100px; */
 }
+.task-form {
+	height: 70px;
+}
+
 .dscrp {
 	text-decoration:none;
 	font-size:1em;

@@ -129,8 +129,6 @@ function generateTasksView(tasks) {
 				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
 		
-		html += "<div class='edit-box' id='open-edit-" + tasks[i]['taskid'] +"' hidden>" + $("#edit-task").html() + "</div>";
-		
 		html += "<form class='task-form'><table border=1><tr>";
 		for (var j = 0; j < tasks[i]['total']; j++) {
 			if(j < tasks[i]['progress'] - 1) {
@@ -147,7 +145,10 @@ function generateTasksView(tasks) {
 				html += "<td class='uncompleted'></td>";
 			}
 		}
-		html += "</table></form></li>";
+		html += "</table></form>"
+		
+		html += "<div class='edit-box' id='open-edit-" + tasks[i]['taskid'] +"' hidden>" + $("#edit-task").html() + "</div>";
+		html += "</li>";
 	}
 	html += "</ul>";
 	$(".tasks").html(html);
