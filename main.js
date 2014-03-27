@@ -17,11 +17,17 @@ $(function(){
 		switchLoginAndSignup(0);
 	});
 
+	$("#account-button").on("click", function(){
+		getAccount();
+		$("#update-account").show();
+	});	
+
 	$("#nav-home").on("click", function(){
 		// update nav bar
 		$("#nav-home").css({"background":"#ededed", "color":"#751B05"});
 		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});
 		checkAuthentication();	
+		$("#add-task").hide();
 	});
 
 	$("#nav-addtask").on("click", function() {
@@ -38,12 +44,7 @@ $(function(){
 				$("#content").hide();			
 			}
 		});	
-	});
-
-	$("#account-button").on("click", function(){
-		getAccount();
-		$("#update-account").show();
-	});		
+	});	
 });
 
 function checkAuthentication(){
@@ -155,6 +156,8 @@ function generateTasksView(tasks) {
 }
 
 function getTasks() {
+	$("#nav-home").css({"background":"#ededed", "color":"#751B05"});
+	$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});
 	$.getJSON("backend.php", {action: "gettasks"}, function(data){
 		console.log(data['tasks']);
 		var tasks = data['tasks'];
@@ -220,7 +223,42 @@ function openEdit(taskid){
 	$("#open-edit-"+taskid).slideDown();
 	//$("#open-edit-"+taskid+ " table").css("border", "none");
 	// need to fetch info from backend/database
-	// $.getJSON("backend.php"
+	$.getJSON("controller.php", {action:"getinfo",taskid:taskid}, function(data){
+		$("#open-edit-"+taskid+" form input[name=dscrp]").val(data['dscrp']);
+		$("#open-edit-"+taskid+" form input[name=details]").val(data['details']);
+		$("#open-edit-"+taskid+" form input[name=total]").val(data['total']);
+		
+		var id = Number(taskid);
+		$("#open-edit-"+taskid+" form input[name=submit]").on("click",function(){
+			editTask(id);
+		});
+	});
+}
+
+function editTask(taskid) {
+	var dscrp = $("#open-edit-"+taskid+" form input[name=dscrp]").val();
+	var details = $("#open-edit-"+taskid+" form input[name=details]").val();
+	var total = $("#open-edit-"+taskid+" form input[name=total]").val();
+	
+	if(!dscrp && !total){
+		$("#open-edit-"+taskid+" .error").html("Description and estimated total time cannot be empty.");
+		return;
+	}
+	if(!dscrp){
+		$("#open-edit-"+taskid+" .error").html("Description cannot be empty.");
+		return;	
+	}
+	if(!total){
+		$("#open-edit-"+taskid+" .error").html("Estimated total time cannot be empty.");
+		return;	
+	}
+	if(!details){
+		details = "";
+	}
+	
+	$.getJSON("controller.php", {action:"edittask",taskid:taskid,dscrp:dscrp,details:details,total:total}, function(data){
+		getTasks();
+	});	
 }
 
 function getAccount(){

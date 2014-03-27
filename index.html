@@ -204,7 +204,7 @@
 	</div>
 	
 	<div id="add-task" class="container">
-		<form id="addtask-form">
+		<form class="task-info-form" id="addtask-form">
 			<table class="form" id="add-task">
 			<tr>
 				<td><div class="error" hidden ></div></td>
@@ -226,8 +226,8 @@
 	</div>
 	
 	<div id="edit-task" class="container">
-		<form id="edittask-form">
-			<table border="">
+		<form class="task-info-form">
+			<table class="form">
 			<tr>
 				<td hidden><div class="error"></div></td>
 			</tr>
@@ -241,7 +241,7 @@
 				<td><label>Estimated total time (30mins as one unit):<br><input type="text" name="total"></label></td>
 			</tr>
 			<tr>
-				<td><input type="button" onclick="addTask()" name="submit" class="submit" value="Edit task"></td>
+				<td><input type="button" name="submit" class="submit" value="Edit task"></td>
 			</tr>
 			</table>
 		</form>

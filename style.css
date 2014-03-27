@@ -378,5 +378,13 @@ nav #current-page {
 }
 
 .edit-box table {
-	border: 0px;
+	margin: 0 0 10px 0;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+td {
+    padding: 0;
 }
