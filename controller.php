@@ -1,26 +1,88 @@
 <?php
-	include "config.inc";
-	include "model.php";
-	
-	function connectToDatabase($db_name, $db_user, $db_password){
-		$dbconn = pg_connect("host=localhost port=5432 dbname=$db_name user=$db_user password=$db_password");
-		if(!$dbconn){
-			$reply = array();
-			$reply['status'] = "Aw, Snap!";
-			//echo "Aw, Snap!";
-			print json_encode($reply);    
-		}
+	session_save_path("sess");
+	session_start();
 
-		return $dbconn; 
-	}
+	header('Content-Type: application/json');
+	require "model.php";
 	
-	$dbconn = connectToDatabase($db_name, $db_user, $db_password);
-	
-	if ($_REQUEST['action']=="getinfo"){
-		getTaskInfo($_REQUEST['taskid'], $dbconn);
+	if (isset($_REQUEST['action'])) {
+		if ($_REQUEST['action'] == 'auth') {
+			$reply = array('auth' => 'no');
+			if (isset($_SESSION['user'])) {
+				$reply['auth'] = 'yes';
+			}
+			print json_encode($reply);
+
+		} else if ($_REQUEST['action'] == 'login') {
+			$reply = array('status' => 'no');
+
+			//check if email and password are filled in
+			if (!$_REQUEST['email'] || !$_REQUEST['password']) {
+				$reply['error'] = 'Please enter both email and password.';
+				print json_encode($reply);
+			} else if (findUser()) {
+				$reply['status'] = 'ok';
+				print json_encode($reply);
+			} else {
+				print json_encode($reply);
+			}
+
+		} else if($_REQUEST['action'] == 'signup'){
+			$reply = array('status' => 'no');
+			
+			if (!filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL)) {
+				$reply['error'] = 'Please enter a valid email.';
+				print json_encode($reply);
+			} else if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
+				$reply['error'] = 'Please enter a valid birthday.';
+				print json_encode($reply);
+			} else if (addUser()) {
+				$reply['status'] = 'ok';
+				print json_encode($reply);	
+			} else {
+				$reply['error'] = 'Email has been registered.';
+				print json_encode($reply);	
+			}
+
+		} else if($_REQUEST['action'] == "getaccount"){
+			$result = getUserInfo();
+
+			//compute year, month and day
+			$birthday = explode("-", $result['birthday']);
+			$result['year'] = intval($birthday[0]);
+			$result['month'] = intval($birthday[1]);
+			$result['day'] = intval($birthday[2]);
+
+			$result['status'] = 'ok';
+
+			print json_encode($result);	
+		} else if($_REQUEST['action'] == "updateaccount"){
+			$reply = array('status' => 'no');
+
+			//validate account information
+			if (!filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL)) {
+				$reply['error'] = 'Please enter a valid email.';
+				print json_encode($reply);
+			} else if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
+				$reply['error'] = 'Please enter a valid birthday.';
+				print json_encode($reply);
+			} else if(updateUser()){
+				$reply['status'] = 'ok';
+				$reply['msg'] = "Your information has been updated.";
+				print json_encode($reply);
+			} else {
+				$reply['error'] = "Update account information failed.";
+				print json_encode($reply);
+			}
+		}
+		else if ($_REQUEST['action']=="getinfo"){
+			getTaskInfo($_REQUEST['taskid'], $dbconn);
+
+		} else if ($_REQUEST['action']=="edittask"){
+			updateTask($_REQUEST['taskid'],$_REQUEST['dscrp'],$_REQUEST['details'],$_REQUEST['total'],$dbconn);
+
+		}
 	}
+
 	
-	if ($_REQUEST['action']=="edittask"){
-		updateTask($_REQUEST['taskid'],$_REQUEST['dscrp'],$_REQUEST['details'],$_REQUEST['total'],$dbconn);
-	}
 ?>
