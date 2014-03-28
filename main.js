@@ -241,23 +241,23 @@ function openEdit(taskid){
 }
 
 function editTask(taskid) {
-	var dscrp = $("#close-edit-"+taskid+" form input[name=dscrp]").val();
-	var details = $("#close-edit-"+taskid+" form textarea[name=details]").val();
-	var total = $("#close-edit-"+taskid+" form input[name=total]").val();
+	var dscrp = $("#open-edit-"+taskid+" form input[name=dscrp]").val();
+	var details = $("#open-edit-"+taskid+" form textarea[name=details]").val();
+	var total = $("#open-edit-"+taskid+" form input[name=total]").val();
 	
 	if((!dscrp || dscrp=="") && (!total || total=="")){
-		$("#close-edit-"+taskid+" .error").show();
-		$("#close-edit-"+taskid+" .error").html("Description and estimated total time cannot be empty.");
+		$("#open-edit-"+taskid+" .error").show();
+		$("#open-edit-"+taskid+" .error").html("Description and estimated total time cannot be empty.");
 		return;
 	}
 	if(!dscrp || dscrp==""){
-		$("#close-edit-"+taskid+" .error").show();
-		$("#close-edit-"+taskid+" .error").html("Description cannot be empty.");
+		$("#open-edit-"+taskid+" .error").show();
+		$("#open-edit-"+taskid+" .error").html("Description cannot be empty.");
 		return;	
 	}
 	if(!total || total==""){
-		$("#close-edit-"+taskid+" .error").show();
-		$("#close-edit-"+taskid+" .error").html("Estimated total time cannot be empty.");
+		$("#open-edit-"+taskid+" .error").show();
+		$("#open-edit-"+taskid+" .error").html("Estimated total time cannot be empty.");
 		return;	
 	}
 	if(!details){
@@ -267,7 +267,7 @@ function editTask(taskid) {
 	var id = Number(taskid);
 	$.getJSON("controller.php", {action:"edittask",taskid:taskid,dscrp:dscrp,details:details,total:total}, function(data){
 		getTasks();
-		$("#close-edit-"+taskid).attr("id")="open-edit-"+id;
+		// $("#close-edit-"+taskid).attr("id")="open-edit-"+id;
 	});	
 }
 

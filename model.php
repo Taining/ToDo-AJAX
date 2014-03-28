@@ -134,14 +134,14 @@ function updateTask(){
 	}
 	
 	// if new total time is less than progress, we assume that the task has been finished
-	if($progress > $total) {
+	if($progress > $_REQUEST['total']) {
 		$progress = $total;
 	}	
 	
 	//update
 	$update_query = "UPDATE tasks SET dscrp=$1, details=$2, total=$3, progress=$4 WHERE taskid=$5;";
 	$result = pg_prepare($dbconn, "update_query", $update_query);
-	$result = pg_execute($dbconn, "update_query", array($_REQUEST['dscrp'], $$_REQUEST['details'], $_REQUEST['total'], $progress, $_REQUEST['taskid']));
+	$result = pg_execute($dbconn, "update_query", array($_REQUEST['dscrp'], $_REQUEST['details'], $_REQUEST['total'], $progress, $_REQUEST['taskid']));
 	
 	return true;
 }
