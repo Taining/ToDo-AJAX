@@ -135,7 +135,7 @@ function updateTask(){
 	
 	// if new total time is less than progress, we assume that the task has been finished
 	if($progress > $_REQUEST['total']) {
-		$progress = $total;
+		$progress = $_REQUEST['total'];
 	}	
 	
 	//update
@@ -217,6 +217,49 @@ function getTaskInfo(){
 	$row = pg_fetch_array($result);
 	
 	return $row;
+}
+
+function caculateRate() {
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
+	// caculate rate
+	$signup_query = "SELECT signupdate, done FROM appuser WHERE uid=$1";
+	$signup_result = pg_prepare($dbconn, "signup", $signup_query);
+	$signup_result = pg_execute($dbconn, "signup", array($_SESSION['user']));
+
+	$row = pg_fetch_array($signup_result);
+	$signupdate = $row['signupdate'];
+	$done = $row['done'];	// number of units that the user has done in total
+
+	$signup = strtotime(date("M d Y", strtotime($signupdate)));
+	$cur = strtotime(date("M d Y"));
+	$dateDiff = ($cur - $signup)/3600/24;	// number of days since signup
+	if ($dateDiff != 0) {
+		$rate = intval($done / $dateDiff);
+	} else {
+		$rate = 0;
+	}
+	return $rate;
+}
+
+function caculateRemaining ($rate) {
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
+	// caculate remaining days
+	$query = "SELECT SUM(total), SUM(progress) FROM tasks WHERE uid=$1";
+	$result = pg_prepare($dbconn, "total_progress", $query);
+	$result = pg_execute($dbconn, "total_progress", array($_SESSION['user']));
+
+	$row = pg_fetch_row($result);
+	$total = $row[0];
+	$progress = $row[1];
+	$remaining = $total - $progress;
+	
+	if(!$rate == 0) {
+		$remainingDays = ceil($remaining / $rate);
+	}else{
+		$$remainingDays = "Infinite";
+	}
+	
+	return $remainingDays;
 }
 
 ?>

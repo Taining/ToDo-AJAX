@@ -166,6 +166,7 @@ function getTasks() {
 	$.getJSON("controller.php", {action: "gettasks"}, function(data){
 		var tasks = data['tasks'];
 		generateTasksView(tasks);
+		displayRateAndRemaining();
 	});
 }
 
@@ -174,6 +175,13 @@ function displayTasks(){
 	$("#signup").hide();
 	$("#content").show();
 	getTasks();
+}
+
+function displayRateAndRemaining(){
+	$.get("controller.php", {action: "rate"}, function(data){
+		$("#rate").html(data['rate']);
+		$("#remaining").html(data['remaining']);
+	});
 }
 
 function undoTask(taskid) {
@@ -236,6 +244,9 @@ function openEdit(taskid){
 			editTask(id);
 		});
 		
+		$("#open-edit-"+taskid+" form input[name=close]").on("click",function(){
+			$("#open-edit-"+taskid).slideUp();
+		});		
 		
 	});
 }

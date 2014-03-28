@@ -134,6 +134,16 @@
 			unset($_SESSION['user']);
 			$reply = array('status' => 'ok');
 			print json_encode($reply);
+		} else if($_REQUEST['action'] == "rate"){
+			$reply = array();
+			
+			$rate = caculateRate();
+			$remaining = caculateRemaining($rate);
+			
+			$reply['rate'] = $rate;
+			$reply['remaining'] = $remaining;
+			$reply['status'] = 'ok';
+			print json_encode($reply);
 		}
 	}
 
