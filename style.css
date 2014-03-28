@@ -285,13 +285,13 @@ nav #current-page {
 	color:#640202;
 }
 .dscrp:hover {
-	color: #CC6161;
+	/* color: #CC6161; */
 }
 
 #container-col {
 	position: relative;
 	top:20px;
-	height: 240px;
+	height: 80px;
 	padding: 1 0 2em 0;
 }
 .small-container {
@@ -299,12 +299,13 @@ nav #current-page {
 }
 #options {
 	border: 4px solid #CC6161;
-	width: 300px;
-	height: 200px;
+	width: 350px;
+	height: 30px;
 	position: absolute;
 	left: 40px;
 	border-radius: 15px;
-	line-height: 1em;
+	text-align: center;
+	/* line-height: 1em; */
 }
 #options a {
 	color:#CC6161;
@@ -320,11 +321,12 @@ nav #current-page {
 }
 #info {
 	border: 4px solid #CC6161;
-	width: 360px;
-	height:200px;
+	width: 350px;
+	height:30px;
 	position: absolute;
-	left: 500px;
+	left: 530px;
 	border-radius: 15px;
+	text-align: center;
 }
 
 #instr {
@@ -373,11 +375,13 @@ nav #current-page {
 	text-decoration: none
 }
 
+/* edit */
+
 .edit-box {
 	position: relative;
 	width: 580px;
 	border: 1px solid grey;
-	margin: -15px 10px 10px 10px;
+	margin: -15px 10px 10px 0px;
 }
 
 .edit-box table {
@@ -388,6 +392,7 @@ nav #current-page {
 	border: none;
 }
 
+/*
 table {
 	border-collapse: collapse;
 }
@@ -395,3 +400,4 @@ table {
 td {
     padding: 0;
 }
+*/
