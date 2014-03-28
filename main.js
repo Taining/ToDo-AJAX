@@ -17,8 +17,12 @@ $(function(){
 		switchLoginAndSignup(0);
 	});
 
+	$("#title").on("click", function(){
+		checkAuthentication();
+	});
+
 	$("#account-button").on("click", function(){
-		$.get("controller.php", {action: "auth"}, function(data){
+		$.getJSON("controller.php", {action: "auth"}, function(data){
 			if (data['auth'] == 'yes'){
 				getAccount();
 				switchView("account");
@@ -39,9 +43,9 @@ $(function(){
 	});
 
 	$("#nav-addtask").on("click", function() {
-		$.get("backend.php", {action: "auth"}, function(data){
+		$.getJSON("backend.php", {action: "auth"}, function(data){
 			if (data['auth'] == 'no') {
-				
+				// do nothing
 			} else {
 				$("#nav-addtask").css({"background":"#ededed", "color":"#751B05"});		
 				$("#nav-home").css({"background":"#751B05", "color":"#ededed"});
@@ -50,14 +54,10 @@ $(function(){
 			}
 		});	
 	});	
-	
-	$("#title").on("click", function(){
-		checkAuthentication();
-	});
 });
 
 function checkAuthentication(){
-	$.get("controller.php", {action: "auth"}, function(data){
+	$.getJSON("controller.php", {action: "auth"}, function(data){
 		if (data['auth'] == 'yes') {
 			switchView("tasks");
 		} else {
@@ -79,7 +79,7 @@ function switchLoginAndSignup(param){
 function login(){
 	var email = $("#login-form input[name=email]").val();
 	var password = $('#login-form input[name=password]').val();
-	$.get('controller.php', {action: "login", email: email, password: password}, function(data){
+	$.getJSON('controller.php', {action: "login", email: email, password: password}, function(data){
 		console.log(data['status']);
 		if (data['status'] == 'ok') {
 			//hide login form and display home page
@@ -116,7 +116,7 @@ function signup(){
 		$("#signup-form .error").html('Passwords do not match.');
 	} else {
 		//send data to backend.php to further validate and update database
-		$.get('controller.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
+		$.getJSON('controller.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
 				console.log(data['status']);
 				if (data['status'] == 'ok') {
 					switchLoginAndSignup(0);
@@ -131,10 +131,12 @@ function signup(){
 function generateTasksView(tasks) {
 	var html = "<ul>";
 	for (var i = 0; i < tasks.length; i++) {
-		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']
-				+"&nbsp</span>(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
+		html += "<li><span class='link'>"
+				+"<span class='dscrp'>"+tasks[i]['dscrp']+"&nbsp</span>"
+				+"(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
 				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>&nbsp"
-				+"<a id='open-info-"+tasks[i]['taskid']+"' onclick='openEdit("+tasks[i]['taskid']+")'>info</a>)</span>&nbsp&nbsp";
+				+"<a id='open-info-"+tasks[i]['taskid']+"' onclick='openEdit("+tasks[i]['taskid']+")'>info</a>)"
+				+"</span>&nbsp&nbsp";
 				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
 		
@@ -144,19 +146,21 @@ function generateTasksView(tasks) {
 				html += "<td class='completed'></td>";
 			} else if (j == tasks[i]['progress'] - 1) {
 				html += "<td class='last'>"
-							+ "<input type='button' name='undo' onclick='undoTask("+tasks[i]['taskid']+")' value='Undo' class='btn'>";
-					  		+ "</td>";
+						+"<input type='button' name='undo' onclick='undoTask("+tasks[i]['taskid']+")' value='Undo' class='btn'>";
+					  	+"</td>";
 			} else if (j == tasks[i]['progress']){
 				html += "<td class='next'>"
-							+ "<input type='button' name='doit' onclick='doTask("+tasks[i]['taskid']+")' value='Do it!' class='btn'>";
-					  		+ "</td>";
+						+"<input type='button' name='doit' onclick='doTask("+tasks[i]['taskid']+")' value='Do it!' class='btn'>";
+					  	+"</td>";
 			} else {
 				html += "<td class='uncompleted'></td>";
 			}
 		}
 		html += "</table></form>"
 		
-		html += "<div class='edit-box' id='open-edit-" + tasks[i]['taskid'] +"' hidden>" + $("#edit-task").html() + "</div>";
+		html += "<div class='edit-box' id='open-edit-" + tasks[i]['taskid'] +"' hidden>" 
+				+$("#edit-task").html() 
+				+"</div>";
 		html += "</li>";
 	}
 	html += "</ul>";
@@ -188,25 +192,25 @@ function displayRateAndRemaining(){
 }
 
 function undoTask(taskid) {
-	$.get("controller.php", {action: "undo", taskid:taskid}, function(data){ });
+	$.getJSON("controller.php", {action: "undo", taskid:taskid}, function(data){ });
 	// update view
 	getTasks();
 }
 
 function doTask(taskid) {
-	$.get("controller.php", {action: "doit", taskid:taskid}, function(data){ });
+	$.getJSON("controller.php", {action: "doit", taskid:taskid}, function(data){ });
 	// update view
 	getTasks();
 }
 
 function deleteTask(taskid) {
-	$.get("controller.php", {action: "delete", taskid:taskid}, function(data){ });
+	$.getJSON("controller.php", {action: "delete", taskid:taskid}, function(data){ });
 	// update view
 	getTasks();
 }
 
 function markAsDone(taskid) {
-	$.get("controller.php", {action: "markdone", taskid:taskid}, function(data){ });
+	$.getJSON("controller.php", {action: "markdone", taskid:taskid}, function(data){ });
 	// update view
 	getTasks();
 }
@@ -227,7 +231,7 @@ function addTask() {
 		$("#addtask-form .error").html('Please enter a numeric time units');			
 	} else {
 		if(!details) details = "";
-		$.get("controller.php", {action: "addtask", dscrp: dscrp, details: details, total: total}, function(data){ });	
+		$.getJSON("controller.php", {action: "addtask", dscrp: dscrp, details: details, total: total}, function(data){ });	
 		$("#add-task").hide();
 		displayTasks();
 	}	
@@ -307,7 +311,7 @@ function getAccount(){
 }
 
 function logout(){
-	$.get("controller.php", {action: "logout"}, function(){
+	$.getJSON("controller.php", {action: "logout"}, function(){
 
 	});
 }

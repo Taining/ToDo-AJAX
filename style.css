@@ -45,7 +45,7 @@ div#login {
 
 .form td a {
     text-decoration: none;
-    color: blue;
+    /* color: blue; */
     font-size: 14px;
 }
 
