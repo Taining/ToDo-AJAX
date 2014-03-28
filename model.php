@@ -13,7 +13,7 @@ function connectToDatabase($db_name, $db_user, $db_password){
 
 //user model---------------------------------------------------
 function findUser(){
-	//find a match in database
+	// find a match in database
 	$dbconn = connectToDatabase(db_name, db_user, db_password);
 	$select_user_query = ("SELECT * FROM appuser WHERE email = $1 AND password = $2;");
 	$result = pg_prepare($dbconn, "select_user", $select_user_query);

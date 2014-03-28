@@ -1,4 +1,3 @@
-
 $(function(){
 	checkAuthentication();
 
@@ -232,7 +231,7 @@ function addTask() {
 
 function openEdit(taskid){
 	$("#open-edit-"+taskid).slideDown();
-	//$("#open-edit-"+taskid+ " table").css("border", "none");
+
 	// need to fetch info from backend/database
 	$.getJSON("controller.php", {action:"getinfo",taskid:taskid}, function(data){
 		$("#open-edit-"+taskid+" form input[name=dscrp]").val(data['dscrp']);
