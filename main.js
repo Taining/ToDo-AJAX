@@ -135,7 +135,7 @@ function generateTasksView(tasks) {
 		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']
 				+"&nbsp</span>(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
 				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>&nbsp"
-				+"<a id='open-info-"+tasks[i]['taskid']+" onclick='openEdit("+tasks[i]['taskid']+")'>info</a>)</span>&nbsp&nbsp";
+				+"<a id='open-info-"+tasks[i]['taskid']+"' onclick='openEdit("+tasks[i]['taskid']+")'>info</a>)</span>&nbsp&nbsp";
 				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
 		
