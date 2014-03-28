@@ -121,16 +121,18 @@
 			print json_encode($reply);
 
 		} else if ($_REQUEST['action']=="getinfo"){
-			getTaskInfo($_REQUEST['taskid'], $dbconn);
+			$result = getTaskInfo();
+			$result['status'] = 'ok';
+			print json_encode($result);
 
 		} else if ($_REQUEST['action']=="edittask"){
 			updateTask();
 			$reply = array('status' => 'ok');
 			print json_encode($reply);
+
 		} else if($_REQUEST['action'] == "logout"){
 			unset($_SESSION['user']);
 			$reply = array('status' => 'ok');
-
 			print json_encode($reply);
 		}
 	}

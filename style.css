@@ -375,10 +375,17 @@ nav #current-page {
 
 .edit-box {
 	position: relative;
+	width: 580px;
+	border: 1px solid grey;
+	margin: -15px 10px 10px 10px;
 }
 
 .edit-box table {
-	margin: 0 0 10px 0;
+	margin: 0 10px 10px 10px;
+}
+
+.edit-box table td {
+	border: none;
 }
 
 table {

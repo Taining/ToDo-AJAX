@@ -209,19 +209,14 @@ function doneTask(){
 	return true;
 }
 
-function getTaskInfo($taskid){
-	$reply=array();
-
+function getTaskInfo(){
 	$dbconn = connectToDatabase(db_name, db_user, db_password);
 	$query="SELECT * FROM tasks WHERE taskid=$1";
 	$result = pg_prepare($dbconn, "get_task_info", $query);
-	$result = pg_execute($dbconn, "get_task_info", array($taskid));
-	
+	$result = pg_execute($dbconn, "get_task_info", array($_REQUEST['taskid']));
 	$row = pg_fetch_array($result);
-	$reply=$row;
-	$reply['status']='ok';
 	
-	print json_encode($reply);
+	return $row;
 }
 
 ?>

@@ -36,8 +36,7 @@ $(function(){
 		// update nav bar
 		$("#nav-home").css({"background":"#ededed", "color":"#751B05"});
 		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});
-		checkAuthentication();	
-		$("#add-task").hide();
+		checkAuthentication();
 	});
 
 	$("#nav-addtask").on("click", function() {
@@ -47,11 +46,8 @@ $(function(){
 			} else {
 				$("#nav-addtask").css({"background":"#ededed", "color":"#751B05"});		
 				$("#nav-home").css({"background":"#751B05", "color":"#ededed"});
-		
-				$("#add-task").show();
-				$("#login").hide();
-				$("#signup").hide();
-				$("#content").hide();			
+				
+				switchView("addTask");			
 			}
 		});	
 	});	
@@ -135,7 +131,7 @@ function generateTasksView(tasks) {
 		html += "<li><span class='link'><span class='dscrp'>"+tasks[i]['dscrp']
 				+"&nbsp</span>(<a onclick='deleteTask("+tasks[i]['taskid']+")'>remove</a>&nbsp;"
 				+"<a onclick='markAsDone("+tasks[i]['taskid']+")'>done</a>&nbsp"
-				+"<a id='open-info-"+tasks[i]['taskid']+" onclick='openEdit("+tasks[i]['taskid']+")'>info</a>)</span>&nbsp&nbsp";
+				+"<a id='open-info-"+tasks[i]['taskid']+"' onclick='openEdit("+tasks[i]['taskid']+")'>info</a>)</span>&nbsp&nbsp";
 				
 		html += "<code>Created at "+tasks[i]['createtime']+"</code>";
 		
@@ -314,7 +310,7 @@ function switchView(option){
 	} else if(option == "account"){
 		$("#update-account").show();
 	} else if(option == "addTask"){
-
+		$("#add-task").show();
 	} else if(option == "editTask"){
 
 	} else if(option == "logout"){
