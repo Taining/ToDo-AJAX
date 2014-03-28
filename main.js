@@ -1,3 +1,4 @@
+
 $(function(){
 	checkAuthentication();
 
@@ -18,9 +19,18 @@ $(function(){
 	});
 
 	$("#account-button").on("click", function(){
-		getAccount();
-		$("#update-account").show();
+		$.get("controller.php", {action: "auth"}, function(data){
+			if (data['auth'] == 'yes'){
+				getAccount();
+				switchView("account");
+			}
+		});
 	});	
+
+	$("#logout").on("click", function(){
+		logout();
+		switchView("logout");
+	});
 
 	$("#nav-home").on("click", function(){
 		// update nav bar
@@ -48,11 +58,11 @@ $(function(){
 });
 
 function checkAuthentication(){
-	$.get("backend.php", {action: "auth"}, function(data){
-		if (data['auth'] == 'no') {
-			$("#login").show();
+	$.get("controller.php", {action: "auth"}, function(data){
+		if (data['auth'] == 'yes') {
+			switchView("tasks");
 		} else {
-			displayTasks();
+			switchView("login");
 		}
 	});
 }
@@ -70,9 +80,8 @@ function switchLoginAndSignup(param){
 function login(){
 	var email = $("#login-form input[name=email]").val();
 	var password = $('#login-form input[name=password]').val();
-	$.get('backend.php', {action: "login", email: email, password: password}, function(data){
+	$.get('controller.php', {action: "login", email: email, password: password}, function(data){
 		console.log(data['status']);
-		console.log(data['error']);
 		if (data['status'] == 'ok') {
 			//hide login form and display home page
 			displayTasks();
@@ -108,7 +117,7 @@ function signup(){
 		$("#signup-form .error").html('Passwords do not match.');
 	} else {
 		//send data to backend.php to further validate and update database
-		$.get('backend.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
+		$.get('controller.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
 				console.log(data['status']);
 				if (data['status'] == 'ok') {
 					switchLoginAndSignup(0);
@@ -158,8 +167,7 @@ function generateTasksView(tasks) {
 function getTasks() {
 	$("#nav-home").css({"background":"#ededed", "color":"#751B05"});
 	$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});
-	$.getJSON("backend.php", {action: "gettasks"}, function(data){
-		// console.log(data['tasks']);
+	$.getJSON("controller.php", {action: "gettasks"}, function(data){
 		var tasks = data['tasks'];
 		generateTasksView(tasks);
 	});
@@ -173,26 +181,25 @@ function displayTasks(){
 }
 
 function undoTask(taskid) {
-	console.log("undo task");
-	$.get("backend.php", {action: "undo", taskid:taskid}, function(data){ });
+	$.get("controller.php", {action: "undo", taskid:taskid}, function(data){ });
 	// update view
 	getTasks();
 }
 
 function doTask(taskid) {
-	$.get("backend.php", {action: "doit", taskid:taskid}, function(data){ });
+	$.get("controller.php", {action: "doit", taskid:taskid}, function(data){ });
 	// update view
 	getTasks();
 }
 
 function deleteTask(taskid) {
-	$.get("backend.php", {action: "delete", taskid:taskid}, function(data){ });
+	$.get("controller.php", {action: "delete", taskid:taskid}, function(data){ });
 	// update view
 	getTasks();
 }
 
 function markAsDone(taskid) {
-	$.get("backend.php", {action: "markdone", taskid:taskid}, function(data){ });
+	$.get("controller.php", {action: "markdone", taskid:taskid}, function(data){ });
 	// update view
 	getTasks();
 }
@@ -213,7 +220,7 @@ function addTask() {
 		$("#addtask-form .error").html('Please enter a numeric time units');			
 	} else {
 		if(!details) details = "";
-		$.get("backend.php", {action: "addtask", dscrp: dscrp, details: details, total: total}, function(data){ });	
+		$.get("controller.php", {action: "addtask", dscrp: dscrp, details: details, total: total}, function(data){ });	
 		$("#add-task").hide();
 		displayTasks();
 	}	
@@ -269,7 +276,7 @@ function editTask(taskid) {
 }
 
 function getAccount(){
-	$.get("backend.php", {action: "getaccount"}, function(data) {
+	$.get("controller.php", {action: "getaccount"}, function(data) {
 		console.log(data['status']);
 		console.log(data);
 		if (data['status'] == 'ok') {
@@ -289,7 +296,39 @@ function getAccount(){
 	});
 }
 
+function logout(){
+	$.get("controller.php", {action: "logout"}, function(){
+		
+	});
+}
 
+function switchView(option){
+	if (option == "login") {
+		$("#login").show();
+		$("#signup").hide();
+	} else if(option == "signup"){
+		$("#login").hide();
+		$("#signup").show();
+	} else if(option == "tasks"){
+ 		$("#login").hide();
+		$("#signup").hide();
+		$("#content").show();
+		getTasks();
+	} else if(option == "account"){
+		$("#login").hide();
+		$("#signup").hide();
+		$("#content").hide();
+		$("#update-account").show();
+	} else if(option == "addTask"){
+
+	} else if(option == "editTask"){
+
+	} else if(option == "logout"){
+		$("#login").show();
+		$("#signup").hide();
+		$("#content").hide();
+	}
+}
 
 
 

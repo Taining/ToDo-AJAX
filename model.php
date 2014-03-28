@@ -70,31 +70,64 @@ function updateUser(){
 }
 
 function updatePassword(){
-	
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
+	$update_pwd_query = "UPDATE appuser SET (password) = ($1) WHERE uid = $2;";
+	$result = pg_prepare($dbconn, "update_pwd", $update_pwd_query);
+	$result = pg_execute($dbconn, "update_pwd", array(md5($_REQUEST['new-password']), $_SESSION['user']));
+
+	if($result) return true;
+	else return false;
 }
 
 
 
 //task model---------------------------------------------------
 function getTasks(){
+	$dbconn = connectToDatabase(db_name, db_user, db_password);	
+	$get_tasks_query="SELECT * FROM tasks WHERE uid=$1 ORDER BY taskid";
+	$result = pg_prepare($dbconn, "get_tasks", $get_tasks_query);
+	$result = pg_execute($dbconn, "get_tasks", array($_SESSION['user']));
 
+	return $result;
 }
 
 function addTask(){
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
+	// get new taskid
+	$query = "SELECT MAX(taskid) FROM tasks;";
+	$result=pg_query($dbconn, $query);
+	$row = pg_fetch_row($result);
+	$taskid = $row[0] + 1;
 
+	// assign ordering value to the new task
+	$query = "SELECT COUNT(*) FROM tasks;";
+	$result=pg_query($dbconn, $query);
+	$row = pg_fetch_row($result);
+	$ordering = $row[0] + 1;
+
+	// add task
+	$query = "INSERT INTO tasks(uid, taskid, dscrp, details, total, progress, ordering, createtime, priority) VALUES($1, $2, $3, $4, $5, 0, $6, $7, $8)";
+	$result = pg_prepare($dbconn, "my_query", $query);
+	$result = pg_execute($dbconn, "my_query", array($_SESSION['user'], $taskid, $_REQUEST['dscrp'], $_REQUEST['details'], $_REQUEST['total'], $ordering, date("Y-m-d"), $ordering));
+
+	return true;
 }
 
 function deleteTask(){
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
+	$delete_task_query = "DELETE FROM tasks WHERE taskid=$1;";
+	$delete_result = pg_prepare($dbconn, "delete_task", $delete_task_query);
+	$delete_result = pg_execute($dbconn, "delete_task", array($_REQUEST['taskid']));
 
+	return true;
 }
 
-function updateTask($taskid,$dscrp,$details,$total,$dbconn){
-	$reply=array();
-	
+function updateTask(){
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
 	// get current progress
 	$get_progress_query = "SELECT progress FROM tasks WHERE taskid=$1";
 	$progress_result = pg_prepare($dbconn, "get_progress", $get_progress_query);
-	$progress_result = pg_execute($dbconn, "get_progress", array($taskid));
+	$progress_result = pg_execute($dbconn, "get_progress", array($_REQUEST['taskid']));
 	if($progress_result) {
 		$row = pg_fetch_row($progress_result);
 		$progress= $row[0];
@@ -108,27 +141,78 @@ function updateTask($taskid,$dscrp,$details,$total,$dbconn){
 	//update
 	$update_query = "UPDATE tasks SET dscrp=$1, details=$2, total=$3, progress=$4 WHERE taskid=$5;";
 	$result = pg_prepare($dbconn, "update_query", $update_query);
-	$result = pg_execute($dbconn, "update_query", array($dscrp, $details, $total, $progress, $taskid));
+	$result = pg_execute($dbconn, "update_query", array($_REQUEST['dscrp'], $$_REQUEST['details'], $_REQUEST['total'], $progress, $_REQUEST['taskid']));
 	
-	$reply['status']="ok";
-	print json_encode($reply);
+	return true;
 }
 
 function doTask(){
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
 
+	$get_progress_query = "SELECT progress, uid FROM tasks WHERE taskid=$1";
+	$result = pg_prepare($dbconn, "get_progress", $get_progress_query);
+	$result = pg_execute($dbconn, "get_progress", array($_REQUEST['taskid']));
+	$row = pg_fetch_row($result);
+
+	// progress++
+	$progress = $row[0];
+	$progress += 1;
+	$update_query = "UPDATE tasks SET progress=$1 WHERE taskid=$2";
+	$result = pg_prepare($dbconn, "update_progress", $update_query);
+	$result = pg_execute($dbconn, "update_progress", array($progress, $_REQUEST['taskid']));
+
+	// done++
+	$uid = $row[1];
+	$get_done_query = "SELECT done FROM appuser WHERE uid=$1";
+	$result = pg_prepare($dbconn, "get_done", $get_done_query);
+	$result = pg_execute($dbconn, "get_done", array($_SESSION['user']));
+
+	$row = pg_fetch_row($result);
+	$done = $row[0];
+	$done += 1;
+	$update_query = "UPDATE appuser SET done=$1 WHERE uid=$2";
+	$result = pg_prepare($dbconn, "update_done", $update_query);
+	$result = pg_execute($dbconn, "update_done", array($done, $_SESSION['user']));
+
+	return true;
 }
 
 function undoTask(){
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
 
+	$get_progress_query = "SELECT progress FROM tasks WHERE taskid=$1";
+	$result = pg_prepare($dbconn, "get_progress", $get_progress_query);
+	$result = pg_execute($dbconn, "get_progress", array($_REQUEST['taskid']));
+
+	$row = pg_fetch_array($result);
+	$progress = $row['progress'];
+	$progress = $progress - 1;
+	
+	$update_progress_query = "UPDATE tasks SET progress = $1 WHERE taskid=$2";
+	$result = pg_prepare($dbconn, "update_progress", $update_progress_query);
+	$result = pg_execute($dbconn, "update_progress", array($progress, $_REQUEST['taskid']));
+
+	return true;
 }
 
 function doneTask(){
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
+	$total_query = "SELECT total FROM tasks WHERE uid=$1 AND taskid=$2";
+	$total_result = pg_prepare($dbconn, "get_total", $total_query);
+	$total_result = pg_execute($dbconn, "get_total", array($_SESSION['user'], $_REQUEST['taskid']));
+	$row = pg_fetch_array($total_result);
 
+	$done_task_query = "UPDATE tasks SET progress = $1 WHERE taskid = $2;";
+	$done_result = pg_prepare($dbconn, "done_task", $done_task_query);
+	$done_result = pg_execute($dbconn, "done_task", array($row['total'], $_REQUEST['taskid']));
+
+	return true;
 }
 
-function getTaskInfo($taskid, $dbconn){
+function getTaskInfo($taskid){
 	$reply=array();
-	
+
+	$dbconn = connectToDatabase(db_name, db_user, db_password);
 	$query="SELECT * FROM tasks WHERE taskid=$1";
 	$result = pg_prepare($dbconn, "get_task_info", $query);
 	$result = pg_execute($dbconn, "get_task_info", array($taskid));

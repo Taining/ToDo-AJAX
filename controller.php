@@ -21,28 +21,23 @@
 				$reply['error'] = 'Please enter both email and password.';
 				print json_encode($reply);
 			} else if (findUser()) {
-				$reply['status'] = 'ok';
-				print json_encode($reply);
-			} else {
-				print json_encode($reply);
-			}
+				$reply['status'] = 'ok';	
+			} 
+			print json_encode($reply);
 
 		} else if($_REQUEST['action'] == 'signup'){
 			$reply = array('status' => 'no');
 			
 			if (!filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL)) {
 				$reply['error'] = 'Please enter a valid email.';
-				print json_encode($reply);
 			} else if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
 				$reply['error'] = 'Please enter a valid birthday.';
-				print json_encode($reply);
 			} else if (addUser()) {
 				$reply['status'] = 'ok';
-				print json_encode($reply);	
 			} else {
 				$reply['error'] = 'Email has been registered.';
-				print json_encode($reply);	
 			}
+			print json_encode($reply);	
 
 		} else if($_REQUEST['action'] == "getaccount"){
 			$result = getUserInfo();
@@ -62,25 +57,81 @@
 			//validate account information
 			if (!filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL)) {
 				$reply['error'] = 'Please enter a valid email.';
-				print json_encode($reply);
 			} else if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
 				$reply['error'] = 'Please enter a valid birthday.';
-				print json_encode($reply);
 			} else if(updateUser()){
 				$reply['status'] = 'ok';
 				$reply['msg'] = "Your information has been updated.";
-				print json_encode($reply);
 			} else {
 				$reply['error'] = "Update account information failed.";
-				print json_encode($reply);
 			}
-		}
-		else if ($_REQUEST['action']=="getinfo"){
+			print json_encode($reply);
+		} else if($_REQUEST['action'] == "updatepassword"){
+			$reply = array('status' => 'no');
+			$result = getUserInfo();
+			$password = $result['password'];
+
+			//validate password form
+			if (md5($_POST['old-password']) != $password) {
+				$reply['error'] = "Please enter correct old password.";
+			} else {
+				//update user password
+				if(updatePassword()) {
+					$reply['status'] = 'ok';
+					$reply['msg'] = "Your password has been updated.";
+				} else $reply['error'] = "Update password failed.";
+			}
+			print json_encode($reply);
+
+		} else if($_REQUEST['action'] == "gettasks"){
+			$reply = array('status' => 'no');
+			$result = getTasks();
+
+			if ($result) {
+				while ($row = pg_fetch_array($result)) {
+					$reply['tasks'][]=$row;
+				}
+				$reply['status'] = 'ok';
+			}
+			print json_encode($reply);
+
+		} else if($_REQUEST['action'] == "undo") {
+			$reply = array('status' => 'ok');
+			undoTask();
+			print json_encode($reply);
+
+		} else if($_REQUEST['action'] == "doit") {
+			$reply = array('status' => 'ok');
+			doTask();
+			print json_encode($reply);
+
+		} else if($_REQUEST['action'] == "delete") {
+			$reply = array('status' => 'ok');
+			deleteTask();
+			print json_encode($reply);
+
+		} else if($_REQUEST['action'] == "markdone") {
+			$reply = array('status' => 'ok');
+			doneTask();
+			print json_encode($reply);
+
+		} else if($_REQUEST['action'] == "addtask") {
+			$reply = array('status' => 'ok');
+			addTask();
+			print json_encode($reply);
+
+		} else if ($_REQUEST['action']=="getinfo"){
 			getTaskInfo($_REQUEST['taskid'], $dbconn);
 
 		} else if ($_REQUEST['action']=="edittask"){
-			updateTask($_REQUEST['taskid'],$_REQUEST['dscrp'],$_REQUEST['details'],$_REQUEST['total'],$dbconn);
+			updateTask();
+			$reply = array('status' => 'ok');
+			print json_encode($reply);
+		} else if($_REQUEST['action'] == "logout"){
+			unset($_SESSION['user']);
+			$reply = array('status' => 'ok');
 
+			print json_encode($reply);
 		}
 	}
 
