@@ -50,6 +50,10 @@ $(function(){
 			}
 		});	
 	});	
+	
+	$("#title").on("click", function(){
+		checkAuthentication();
+	});
 });
 
 function checkAuthentication(){
