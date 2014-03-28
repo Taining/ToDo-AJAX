@@ -298,26 +298,20 @@ function getAccount(){
 
 function logout(){
 	$.get("controller.php", {action: "logout"}, function(){
-		
+
 	});
 }
 
 function switchView(option){
+	$(".view-control").hide();
 	if (option == "login") {
 		$("#login").show();
-		$("#signup").hide();
 	} else if(option == "signup"){
-		$("#login").hide();
 		$("#signup").show();
 	} else if(option == "tasks"){
- 		$("#login").hide();
-		$("#signup").hide();
 		$("#content").show();
 		getTasks();
 	} else if(option == "account"){
-		$("#login").hide();
-		$("#signup").hide();
-		$("#content").hide();
 		$("#update-account").show();
 	} else if(option == "addTask"){
 
@@ -325,8 +319,6 @@ function switchView(option){
 
 	} else if(option == "logout"){
 		$("#login").show();
-		$("#signup").hide();
-		$("#content").hide();
 	}
 }
 
