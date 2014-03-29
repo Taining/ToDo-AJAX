@@ -70,16 +70,13 @@ function signup(){
 	var html = "";
 	if (!fname || !lname || !email || !password || !repassword || month==0 || day==0 || year==0
 		|| !news || !policy) {
-		$("#signup-form .error").show();
 		html += 'Fill in all fields.';
 	}
 	if (password != repassword){
-		//passwords do not match
-		$("#signup-form .error").show();
 		html += 'Passwords do not match.';
 	} 
 	if ($("#signup-form input[name=policy]").is(":checked")){
-		html += 'Agree our Terms.';
+		html += 'Agree our Terms. ';
 	}
 	if(html == '') {
 		//send data to backend.php to further validate and update database
@@ -92,6 +89,9 @@ function signup(){
 					$("#signup-form .error").html(data['error']);
 				}
 		});
+	} else {
+		$("#signup-form .error").show();
+		$("#signup-form .error").html(html);
 	}
 }
 
