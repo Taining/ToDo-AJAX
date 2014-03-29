@@ -28,7 +28,10 @@
 			$reply['error'] = 'Please enter both email and password.';
 		} else if (findUser()) {
 			$reply['status'] = 'ok';	
-		} 
+		} else {
+			$reply['status'] = 'no';
+			$reply['error'] = 'Incorrect email or password.';
+		}
 		print json_encode($reply);
 		return;
 	}
