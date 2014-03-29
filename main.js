@@ -36,9 +36,6 @@ $(function(){
 	});
 
 	$("#nav-home").on("click", function(){
-		// update nav bar
-		$("#nav-home").css({"background":"#ededed", "color":"#751B05"});
-		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});
 		checkAuthentication();
 	});
 
@@ -47,9 +44,6 @@ $(function(){
 			if (data['auth'] == 'no') {
 				// do nothing
 			} else {
-				$("#nav-addtask").css({"background":"#ededed", "color":"#751B05"});		
-				$("#nav-home").css({"background":"#751B05", "color":"#ededed"});
-				
 				switchView("addTask");			
 			}
 		});	
@@ -57,13 +51,18 @@ $(function(){
 });
 
 function checkAuthentication(){
+	var result = false;
+	
 	$.getJSON("controller.php", {action: "auth"}, function(data){
 		if (data['auth'] == 'yes') {
 			switchView("tasks");
+			result = true;
 		} else {
 			switchView("login");
 		}
 	});
+	
+	return result;
 }
 
 function switchLoginAndSignup(param){
@@ -178,9 +177,7 @@ function getTasks() {
 }
 
 function displayTasks(){
-	$("#login").hide();
-	$("#signup").hide();
-	$("#content").show();
+	switchView("tasks");
 	getTasks();
 }
 
@@ -193,25 +190,25 @@ function displayRateAndRemaining(){
 
 function undoTask(taskid) {
 	$.getJSON("controller.php", {action: "undo", taskid:taskid}, function(data){ });
-	// update view
+	// update task view
 	getTasks();
 }
 
 function doTask(taskid) {
 	$.getJSON("controller.php", {action: "doit", taskid:taskid}, function(data){ });
-	// update view
+	// update task view
 	getTasks();
 }
 
 function deleteTask(taskid) {
 	$.getJSON("controller.php", {action: "delete", taskid:taskid}, function(data){ });
-	// update view
+	// update task view
 	getTasks();
 }
 
 function markAsDone(taskid) {
 	$.getJSON("controller.php", {action: "markdone", taskid:taskid}, function(data){ });
-	// update view
+	// update task view
 	getTasks();
 }
 
@@ -232,7 +229,6 @@ function addTask() {
 	} else {
 		if(!details) details = "";
 		$.getJSON("controller.php", {action: "addtask", dscrp: dscrp, details: details, total: total}, function(data){ });	
-		$("#add-task").hide();
 		displayTasks();
 	}	
 }
@@ -341,19 +337,38 @@ function switchView(option){
 	$(".view-control").hide();
 	if (option == "login") {
 		$("#login").show();
+		switchTab("others");
 	} else if(option == "signup"){
 		$("#signup").show();
+		switchTab("others");
 	} else if(option == "tasks"){
 		$("#content").show();
 		getTasks();
+		switchTab("home");
 	} else if(option == "account"){
 		$("#update-account").show();
+		switchTab("others");
 	} else if(option == "addTask"){
 		$("#add-task").show();
+		switchTab("addtask");
 	} else if(option == "editTask"){
 
 	} else if(option == "logout"){
 		$("#login").show();
+		switchTab("others");
+	}
+}
+
+function switchTab(option){
+	if (option == "home") {
+		$("#nav-home").css({"background":"#ededed", "color":"#751B05"});		
+		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});	
+	} else if(option == "addtask") {
+		$("#nav-addtask").css({"background":"#ededed", "color":"#751B05"});		
+		$("#nav-home").css({"background":"#751B05", "color":"#ededed"});	
+	} else if(option == "others") {
+		$("#nav-home").css({"background":"#751B05", "color":"#ededed"});
+		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});		
 	}
 }
 
