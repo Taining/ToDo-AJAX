@@ -73,7 +73,7 @@ function updatePassword(){
 	$dbconn = connectToDatabase(db_name, db_user, db_password);
 	$update_pwd_query = "UPDATE appuser SET (password) = ($1) WHERE uid = $2;";
 	$result = pg_prepare($dbconn, "update_pwd", $update_pwd_query);
-	$result = pg_execute($dbconn, "update_pwd", array(md5($_REQUEST['new-password']), $_SESSION['user']));
+	$result = pg_execute($dbconn, "update_pwd", array(md5($_REQUEST['newPassword']), $_SESSION['user']));
 
 	if($result) return true;
 	else return false;

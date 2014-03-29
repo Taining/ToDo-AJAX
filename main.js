@@ -272,6 +272,9 @@ function getAccount(){
 	$("#update-account input[name=info]").on("click", function(){
 		updateAccount();
 	});
+	$("#update-account input[name=pwd]").on("click", function(){
+		updatePassword();
+	});
 }
 
 function updateAccount(){
@@ -296,6 +299,20 @@ function updateAccount(){
 	});
 }
 
+function updatePassword(){
+	var oldPassword = $("#update-account input[name=old-password]").val();
+	var newPassword = $("#update-account input[name=new-password]").val();
+	var rePassword = $("#update-account input[name=re-password]").val();
+
+	$.getJSON("controller.php", {action: "updatepassword", oldPassword: oldPassword, newPassword: newPassword, rePassword: rePassword}, function(data){
+		if(data['status'] == 'ok'){
+			$("#password-info .error").html(data['msg']);
+		} else {
+			$("#password-info .error").html(data['error']);
+		}
+		$("#password-info .error").show();
+	});
+}
 
 function logout(){
 	$.getJSON("controller.php", {action: "logout"}, function(){
@@ -316,6 +333,8 @@ function switchView(option){
 		getTasks();
 		switchTab("home");
 	} else if(option == "account"){
+		$("#account-info .error").hide();
+		$("#password-info .error").hide();
 		$("#update-account").show();
 		switchTab("others");
 	} else if(option == "addTask"){

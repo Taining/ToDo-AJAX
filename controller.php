@@ -88,8 +88,12 @@
 		$password = $result['password'];
 
 		//validate password form
-		if (md5($_POST['old-password']) != $password) {
+		if(!$_REQUEST['oldPassword'] || !$_REQUEST['newPassword'] || !$_REQUEST['rePassword']){
+			$reply['error'] = "Please fill in all fields.";
+		} else if (md5($_REQUEST['oldPassword']) != $password) {
 			$reply['error'] = "Please enter correct old password.";
+		} else if($_REQUEST['newPassword'] != $_REQUEST['rePassword']){
+			$reply['error'] = "Passwords do not match.";
 		} else {
 			//update user password
 			if(updatePassword()) {
