@@ -317,13 +317,18 @@ function updateAccount(){
 	var month 	= $("#update-account select[name=month]").val();
 	var day 	= $("#update-account select[name=day]").val();
 	var sex 	= $("#update-account input[name=sex]:checked").val();
-	if ($("#update-account input[name=news]:checked")) {
-		var news = 'true';
-	} else {
-		var news = 'false';
-	}
+	var news 	= $("#update-account input[name=news]").is(":checked");
 
 	console.log(fname + " " + lname + " " + email + " " + year + " " + month + " " + day + " " + sex + " " + news);
+
+	$.getJSON("controller.php",{action: "updateaccount", fname: fname, lname: lname, email: email, year: year, month: month, day: day, sex: sex, news: news}, function(data){
+		if(data['status'] == 'ok'){
+			$("#account-info .error").html(data['msg']);
+		} else {
+			$("#account-info .error").html(data['error']);
+		}
+		$("#account-info .error").show();
+	});
 }
 
 
