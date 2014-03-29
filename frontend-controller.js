@@ -348,6 +348,7 @@ function initAddTaskView() {
 
 function switchView(option){
 	$(".view-control").hide();
+	$(".error").hide();
 	if (option == "login") {
 		//empty login password field
 		var password = $('#login-form input[name=password]').val("");
@@ -367,8 +368,6 @@ function switchView(option){
 		var newPassword = $("#update-account input[name=new-password]").val("");
 		var rePassword = $("#update-account input[name=re-password]").val("");
 
-		$("#account-info .error").hide();
-		$("#password-info .error").hide();
 		$("#update-account").show();
 		switchTab("others");
 	} else if(option == "addTask"){
