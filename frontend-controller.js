@@ -1,11 +1,4 @@
 $(function(){
-	/*
-	$.getJSON("backend-controller.php", {action: "https"}, function(data){
-		if (data['status'] == 'no'){
-			window.location.href = data['url'];
-		}
-	});	
-	*/
 
 	checkAuthentication();
 
@@ -78,13 +71,17 @@ function signup(){
 	if (!fname || !lname || !email || !password || !repassword || month==0 || day==0 || year==0
 		|| !news || !policy) {
 		$("#signup-form .error").show();
-		html += 'Please fill in all required fields.';
+		html += 'Fill in all fields.';
 	}
 	if (password != repassword){
 		//passwords do not match
 		$("#signup-form .error").show();
 		html += 'Passwords do not match.';
-	} else {
+	} 
+	if ($("#signup-form input[name=policy]").is(":checked")){
+		html += 'Agree our Terms.';
+	}
+	if(html == '') {
 		//send data to backend.php to further validate and update database
 		$.getJSON('backend-controller.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
 				console.log(data['status']);
