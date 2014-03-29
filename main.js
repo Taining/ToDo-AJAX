@@ -320,6 +320,11 @@ function logout(){
 	});
 }
 
+function initAddTaskView() {
+	var form = document.getElementById("add-task-form");
+	form.reset();
+}
+
 function switchView(option){
 	$(".view-control").hide();
 	if (option == "login") {
@@ -347,6 +352,7 @@ function switchView(option){
 		switchTab("others");
 	} else if(option == "addTask"){
 		$("#add-task").show();
+		initAddTaskView();
 		switchTab("addtask");
 	} else if(option == "editTask"){
 
