@@ -39,17 +39,20 @@
 	}
 	
 	if($_REQUEST['action'] == 'signup'){
-		$reply = array('status' => 'no');
+		$reply = array('status' => 'no', 'error' => '');
 		
 		if (!filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL)) {
-			$reply['error'] = 'Please enter a valid email.';
+			$reply['error'] .= 'Invalid email. ';
 		}
 		if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
-			$reply['error'] .= 'Please enter a valid birthday.';
-		} else if (addUser($dbconn)) {
-			$reply['status'] = 'ok';
-		} else {
-			$reply['error'] = 'Email has been registered.';
+			$reply['error'] .= 'Invalid birthday. ';
+		} 
+		if($reply['error'] == ''){
+			if (addUser($dbconn)) {
+				$reply['status'] = 'ok';
+			} else {
+				$reply['error'] = 'Email has been registered.';
+			}
 		}
 		print json_encode($reply);	
 		return;
@@ -71,25 +74,29 @@
 	}
 	
 	if($_REQUEST['action'] == "updateaccount"){
-		$reply = array('status' => 'no');
+		$reply = array('status' => 'no', 'error' => '');
 
 		//validate account information
 		if (!filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL)) {
-			$reply['error'] = 'Please enter a valid email.';
-		} else if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
-			$reply['error'] = 'Please enter a valid birthday.';
-		} else if(updateUser($dbconn)){
-			$reply['status'] = 'ok';
-			$reply['msg'] = "Your information has been updated.";
-		} else {
-			$reply['error'] = "Update account information failed.";
+			$reply['error'] .= 'Invalid email. ';
+		}
+		if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
+			$reply['error'] .= 'Invalid birthday. ';
+		}
+		if($reply['error'] == ''){
+			if(updateUser($dbconn)){
+				$reply['status'] = 'ok';
+				$reply['msg'] = "Your information has been updated.";
+			} else {
+				$reply['error'] = "Update account information failed.";
+			}
 		}
 		print json_encode($reply);
 		return;
 	}
 	
 	if($_REQUEST['action'] == "updatepassword"){
-		$reply = array('status' => 'no');
+		$reply = array('status' => 'no', 'error' => '');
 		$result = getUserInfo($dbconn);
 		
 		//calculate password
@@ -97,12 +104,15 @@
 
 		//validate password form
 		if(!$_REQUEST['oldPassword'] || !$_REQUEST['newPassword'] || !$_REQUEST['rePassword']){
-			$reply['error'] = "Please fill in all fields.";
-		} else if ($result['password'] != $password) {
-			$reply['error'] = "Please enter correct old password.";
-		} else if($_REQUEST['newPassword'] != $_REQUEST['rePassword']){
-			$reply['error'] = "Passwords do not match.";
-		} else {
+			$reply['error'] .= "Fill in all fields. ";
+		}
+		if ($result['password'] != $password) {
+			$reply['error'] .= "Incorrect old password. ";
+		}
+		if($_REQUEST['newPassword'] != $_REQUEST['rePassword']){
+			$reply['error'] .= "Passwords not match. ";
+		}
+		if($reply['error'] == '') {
 			//update user password
 			if(updatePassword($dbconn)) {
 				$reply['status'] = 'ok';
