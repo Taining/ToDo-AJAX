@@ -89,6 +89,8 @@ function signup(){
 }
 
 function generateTasksView(tasks) {
+	$(".tasks").html("");
+	
 	var html = "<ul>";
 	for (var i = 0; i < tasks.length; i++) {
 		html += "<li><span class='link'>"
@@ -128,13 +130,12 @@ function generateTasksView(tasks) {
 }
 
 function getTasks() {
-	$("#nav-home").css({"background":"#ededed", "color":"#751B05"});
-	$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});
 	$.getJSON("controller.php", {action: "gettasks"}, function(data){
 		var tasks = data['tasks'];
 		generateTasksView(tasks);
 		displayRateAndRemaining();
 	});
+	switchTab("home");
 }
 
 function displayTasks(){
@@ -152,13 +153,13 @@ function displayRateAndRemaining(){
 function undoTask(taskid) {
 	$.getJSON("controller.php", {action: "undo", taskid:taskid}, function(data){ });
 	// update task view
-	getTasks();
+	displayTasks();
 }
 
 function doTask(taskid) {
 	$.getJSON("controller.php", {action: "doit", taskid:taskid}, function(data){ });
 	// update task view
-	getTasks();
+	displayTasks();
 }
 
 function deleteTask(taskid) {
@@ -178,15 +179,18 @@ function addTask() {
 	var details = $("#addtask-form textarea[name=details]").val();
 	var total 	= $("#addtask-form input[name=total]").val();
 	
-	if (!dscrp){
+	if (!dscrp && !total){
 		$("#addtask-form .error").show();
 		$("#addtask-form .error").html('Description and estimated total time cannot be empty.');
+	} else if (!dscrp) {
+		$("#addtask-form .error").show();
+		$("#addtask-form .error").html('Description cannot be empty.');
 	} else if (!total) {
 		$("#addtask-form .error").show();
-		$("#addtask-form .error").html('Description and estimated total time cannot be empty.');
+		$("#addtask-form .error").html('Estimated total time cannot be empty.');
 	} else if (!$.isNumeric(total)){
 		$("#addtask-form .error").show();
-		$("#addtask-form .error").html('Please enter a numeric time units');			
+		$("#addtask-form .error").html('Please enter a numeric time units for estimated total time.');			
 	} else {
 		if(!details) details = "";
 		$.getJSON("controller.php", {action: "addtask", dscrp: dscrp, details: details, total: total}, function(data){ });	
