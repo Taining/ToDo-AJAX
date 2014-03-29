@@ -17,7 +17,7 @@ CREATE TABLE appuser (
 );
 
 CREATE TABLE tasks(
-	uid INTEGER,
+	uid SERIAL,
 	taskid INTEGER PRIMARY KEY,
 	dscrp VARCHAR(40),
 	details VARCHAR(1000),

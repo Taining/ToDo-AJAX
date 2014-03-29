@@ -2,6 +2,7 @@
 	session_save_path("sessions");
 	session_start();
 
+	header('Content-type: text/html; charset=utf-8');
 	header('Content-Type: application/json');
 	require "model.php";
 
