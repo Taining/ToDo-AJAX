@@ -253,10 +253,10 @@ function caculateRemaining ($rate) {
 	$progress = $row[1];
 	$remaining = $total - $progress;
 	
-	if(!$rate == 0) {
+	if($rate != 0) {
 		$remainingDays = ceil($remaining / $rate);
 	}else{
-		$$remainingDays = "Infinite";
+		$remainingDays = "Infinite";
 	}
 	
 	return $remainingDays;

@@ -154,7 +154,12 @@ function displayTasks(){
 function displayRateAndRemaining(){
 	$.get("backend-controller.php", {action: "rate"}, function(data){
 		$("#rate").html(data['rate']);
-		$("#remaining").html(data['remaining']);
+		
+		if(data['remaining']=="Infinite"){
+			$("#remaining").html("&#8734");
+		}else{
+			$("#remaining").html(data['remaining']);
+		}
 	});
 }
 
