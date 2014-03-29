@@ -15,14 +15,14 @@
 		<div class='header-container'>
 			<div id="utility">
 				<a id="account-button">My account</a>
-				<a id="logout">Log out</a>
+				<a id="logout" onclick="logout()">Log out</a>
 			</div>		
-			<div id='title'>
+			<div id='title' onclick="checkAuthentication()">
 				<h1>To-do Manager</h1>
 			</div>
 			<nav>
 				<ul>
-					<li><a id="nav-home">Home</a></li>
+					<li><a id="nav-home" onclick="checkAuthentication()">Home</a></li>
 					<li><a id="nav-addtask">Add Task</a></li>
 				</ul>
 			</nav>
@@ -146,8 +146,8 @@
 				<tr>
 					<td></td>
 					<td>
-						<input type="button" class="submit" id='signupButton' value="Sign Up" />
-						<input type="button" class="submit" id='gobackButton' value="GO Back" />
+						<input type="button" class="submit" id='signupButton' value="Sign Up" onclick="signup()"/>
+						<input type="button" class="submit" id='gobackButton' value="GO Back" onclick="switchView('login')"/>
 					</td>
 				</tr>
 			</table>
@@ -170,7 +170,7 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td class="link"><input type="button" class="submit" id="loginButton" value="Log In" /> or <a id='linkToSignUp'>Sign up</a></td>
+					<td class="link"><input type="button" class="submit" id="loginButton" value="Log In" onclick="login()"/> or <a id='linkToSignUp' onclick="switchView('signup')">Sign up</a></td>
 				</tr>
 			</table>
 		</form>

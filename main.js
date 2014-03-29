@@ -1,26 +1,6 @@
 $(function(){
 	checkAuthentication();
 
-	$("#loginButton").on("click", function(){
-		login();
-	});
-
-	$("#linkToSignUp").on("click", function(){
-		switchLoginAndSignup(1);
-	});
-
-	$("#signupButton").on("click", function(){
-		signup();
-	});
-
-	$("#gobackButton").on("click", function(){
-		switchLoginAndSignup(0);
-	});
-
-	$("#title").on("click", function(){
-		checkAuthentication();
-	});
-
 	$("#account-button").on("click", function(){
 		$.getJSON("controller.php", {action: "auth"}, function(data){
 			if (data['auth'] == 'yes'){
@@ -28,15 +8,6 @@ $(function(){
 				switchView("account");
 			}
 		});
-	});	
-
-	$("#logout").on("click", function(){
-		logout();
-		switchView("logout");
-	});
-
-	$("#nav-home").on("click", function(){
-		checkAuthentication();
 	});
 
 	$("#nav-addtask").on("click", function() {
@@ -63,16 +34,6 @@ function checkAuthentication(){
 	});
 	
 	return result;
-}
-
-function switchLoginAndSignup(param){
-	if (param == 1) {
-		$("#login").hide();
-		$("#signup").show();
-	} else {
-		$("#login").show();
-		$("#signup").hide();
-	}
 }
 
 function login(){
@@ -118,7 +79,7 @@ function signup(){
 		$.getJSON('controller.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
 				console.log(data['status']);
 				if (data['status'] == 'ok') {
-					switchLoginAndSignup(0);
+					switchView('login');
 				} else {
 					$("#signup-form .error").show();
 					$("#signup-form .error").html(data['error']);
@@ -334,7 +295,7 @@ function updateAccount(){
 
 function logout(){
 	$.getJSON("controller.php", {action: "logout"}, function(){
-
+		switchView("logout");
 	});
 }
 

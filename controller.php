@@ -26,7 +26,6 @@
 		//check if email and password are filled in
 		if (!$_REQUEST['email'] || !$_REQUEST['password']) {
 			$reply['error'] = 'Please enter both email and password.';
-			print json_encode($reply);
 		} else if (findUser()) {
 			$reply['status'] = 'ok';	
 		} 
