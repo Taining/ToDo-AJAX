@@ -63,22 +63,25 @@ function signup(){
 	var day 	= $("#signup-form select[name=day]").val();
 	var year 	= $("#signup-form select[name=year]").val();
 	var sex 	= $("#signup-form input[name=sex]").val();
-	var news 	= $("#signup-form input[name=news]").val();
-	var policy 	= $("#signup-form input[name=policy]").val();
+	var news 	= 'false';
+	var policy 	= 'true';
 
 	//user must fill in all fields
 	var html = "";
 	if (!fname || !lname || !email || !password || !repassword || month==0 || day==0 || year==0
 		|| !news || !policy) {
-		html += 'Fill in all fields.';
+		html += 'Fill in all fields. ';
 	}
 	if (password != repassword){
-		html += 'Passwords do not match.';
+		html += 'Passwords do not match. ';
 	} 
-	if ($("#signup-form input[name=policy]").is(":checked")){
+	if (!$("#signup-form input[name=policy]").is(":checked")){
 		html += 'Agree our Terms. ';
 	}
 	if(html == '') {
+		if($("#signup-form input[name=news]").is(":checked")){
+			news = 'true';
+		}
 		//send data to backend.php to further validate and update database
 		$.getJSON('backend-controller.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
 				console.log(data['status']);
