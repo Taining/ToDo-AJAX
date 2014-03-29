@@ -2,7 +2,7 @@ $(function(){
 	checkAuthentication();
 
 	$("#account-button").on("click", function(){
-		$.getJSON("controller.php", {action: "auth"}, function(data){
+		$.getJSON("backend-controller.php", {action: "auth"}, function(data){
 			if (data['auth'] == 'yes'){
 				getAccount();
 				switchView("account");
@@ -24,7 +24,7 @@ $(function(){
 function checkAuthentication(){
 	var result = false;
 	
-	$.getJSON("controller.php", {action: "auth"}, function(data){
+	$.getJSON("backend-controller.php", {action: "auth"}, function(data){
 		if (data['auth'] == 'yes') {
 			switchView("tasks");
 			result = true;
@@ -39,7 +39,7 @@ function checkAuthentication(){
 function login(){
 	var email = $("#login-form input[name=email]").val();
 	var password = $('#login-form input[name=password]').val();
-	$.getJSON('controller.php', {action: "login", email: email, password: password}, function(data){
+	$.getJSON('backend-controller.php', {action: "login", email: email, password: password}, function(data){
 		console.log(data['status']);
 		if (data['status'] == 'ok') {
 			//hide login form and display home page
@@ -76,7 +76,7 @@ function signup(){
 		$("#signup-form .error").html('Passwords do not match.');
 	} else {
 		//send data to backend.php to further validate and update database
-		$.getJSON('controller.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
+		$.getJSON('backend-controller.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
 				console.log(data['status']);
 				if (data['status'] == 'ok') {
 					switchView('login');
@@ -130,7 +130,7 @@ function generateTasksView(tasks) {
 }
 
 function getTasks() {
-	$.getJSON("controller.php", {action: "gettasks"}, function(data){
+	$.getJSON("backend-controller.php", {action: "gettasks"}, function(data){
 		var tasks = data['tasks'];
 		generateTasksView(tasks);
 		displayRateAndRemaining();
@@ -144,32 +144,32 @@ function displayTasks(){
 }
 
 function displayRateAndRemaining(){
-	$.get("controller.php", {action: "rate"}, function(data){
+	$.get("backend-controller.php", {action: "rate"}, function(data){
 		$("#rate").html(data['rate']);
 		$("#remaining").html(data['remaining']);
 	});
 }
 
 function undoTask(taskid) {
-	$.getJSON("controller.php", {action: "undo", taskid:taskid}, function(data){ });
+	$.getJSON("backend-controller.php", {action: "undo", taskid:taskid}, function(data){ });
 	// update task view
 	displayTasks();
 }
 
 function doTask(taskid) {
-	$.getJSON("controller.php", {action: "doit", taskid:taskid}, function(data){ });
+	$.getJSON("backend-controller.php", {action: "doit", taskid:taskid}, function(data){ });
 	// update task view
 	displayTasks();
 }
 
 function deleteTask(taskid) {
-	$.getJSON("controller.php", {action: "delete", taskid:taskid}, function(data){ });
+	$.getJSON("backend-controller.php", {action: "delete", taskid:taskid}, function(data){ });
 	// update task view
 	getTasks();
 }
 
 function markAsDone(taskid) {
-	$.getJSON("controller.php", {action: "markdone", taskid:taskid}, function(data){ });
+	$.getJSON("backend-controller.php", {action: "markdone", taskid:taskid}, function(data){ });
 	// update task view
 	getTasks();
 }
@@ -193,7 +193,7 @@ function addTask() {
 		$("#addtask-form .error").html('Please enter a numeric time units for estimated total time.');			
 	} else {
 		if(!details) details = "";
-		$.getJSON("controller.php", {action: "addtask", dscrp: dscrp, details: details, total: total}, function(data){ });	
+		$.getJSON("backend-controller.php", {action: "addtask", dscrp: dscrp, details: details, total: total}, function(data){ });	
 		displayTasks();
 	}	
 }
@@ -202,7 +202,7 @@ function openEdit(taskid){
 	$("#open-edit-"+taskid).slideDown();
 
 	// need to fetch info from backend/database
-	$.getJSON("controller.php", {action:"getinfo",taskid:taskid}, function(data){
+	$.getJSON("backend-controller.php", {action:"getinfo",taskid:taskid}, function(data){
 		$("#open-edit-"+taskid+" form input[name=dscrp]").val(data['dscrp']);
 		$("#open-edit-"+taskid+" form textarea[name=details]").val(data['details']);
 		$("#open-edit-"+taskid+" form input[name=total]").val(data['total']);
@@ -244,14 +244,14 @@ function editTask(taskid) {
 	}
 	
 	var id = Number(taskid);
-	$.getJSON("controller.php", {action:"edittask",taskid:taskid,dscrp:dscrp,details:details,total:total}, function(data){
+	$.getJSON("backend-controller.php", {action:"edittask",taskid:taskid,dscrp:dscrp,details:details,total:total}, function(data){
 		getTasks();
 		// $("#close-edit-"+taskid).attr("id")="open-edit-"+id;
 	});	
 }
 
 function getAccount(){
-	$.get("controller.php", {action: "getaccount"}, function(data) {
+	$.get("backend-controller.php", {action: "getaccount"}, function(data) {
 		console.log(data['status']);
 		if (data['status'] == 'ok') {
 			$("#update-account input[name=fname]").val(data['fname']);
@@ -289,7 +289,7 @@ function updateAccount(){
 
 	console.log(fname + " " + lname + " " + email + " " + year + " " + month + " " + day + " " + sex + " " + news);
 
-	$.getJSON("controller.php",{action: "updateaccount", fname: fname, lname: lname, email: email, year: year, month: month, day: day, sex: sex, news: news}, function(data){
+	$.getJSON("backend-controller.php",{action: "updateaccount", fname: fname, lname: lname, email: email, year: year, month: month, day: day, sex: sex, news: news}, function(data){
 		if(data['status'] == 'ok'){
 			$("#account-info .error").html(data['msg']);
 		} else {
@@ -304,7 +304,7 @@ function updatePassword(){
 	var newPassword = $("#update-account input[name=new-password]").val();
 	var rePassword = $("#update-account input[name=re-password]").val();
 
-	$.getJSON("controller.php", {action: "updatepassword", oldPassword: oldPassword, newPassword: newPassword, rePassword: rePassword}, function(data){
+	$.getJSON("backend-controller.php", {action: "updatepassword", oldPassword: oldPassword, newPassword: newPassword, rePassword: rePassword}, function(data){
 		if(data['status'] == 'ok'){
 			$("#password-info .error").html(data['msg']);
 		} else {
@@ -315,7 +315,7 @@ function updatePassword(){
 }
 
 function logout(){
-	$.getJSON("controller.php", {action: "logout"}, function(){
+	$.getJSON("backend-controller.php", {action: "logout"}, function(){
 		switchView("logout");
 	});
 }
