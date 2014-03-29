@@ -179,13 +179,13 @@ function addTask() {
 	var details = $("#addtask-form textarea[name=details]").val();
 	var total 	= $("#addtask-form input[name=total]").val();
 	
-	if (!dscrp && !total){
+	if ((!dscrp||dscrp.trim()=="") && (!total||dscrp=="")){
 		$("#addtask-form .error").show();
 		$("#addtask-form .error").html('Description and estimated total time cannot be empty.');
-	} else if (!dscrp) {
+	} else if (!dscrp||dscrp.trim()=="") {
 		$("#addtask-form .error").show();
 		$("#addtask-form .error").html('Description cannot be empty.');
-	} else if (!total) {
+	} else if (!total||dscrp.trim()=="") {
 		$("#addtask-form .error").show();
 		$("#addtask-form .error").html('Estimated total time cannot be empty.');
 	} else if (!$.isNumeric(total)){
