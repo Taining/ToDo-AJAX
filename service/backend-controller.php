@@ -1,5 +1,5 @@
 <?php
-	session_save_path("service/sessions");
+	session_save_path("sessions");
 	session_start();
 
 	header('Content-Type: application/json');
