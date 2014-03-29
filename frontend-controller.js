@@ -13,6 +13,7 @@ $(function(){
 
 	$("#nav-addtask").on("click", function() {
 		$.getJSON("service/backend-controller.php", {action: "auth"}, function(data){
+		$.getJSON("backend-controller.php", {action: "auth"}, function(data){
 			if (data['auth'] == 'no') {
 				// do nothing
 			} else {
@@ -148,7 +149,6 @@ function getTasks() {
 	$.getJSON("service/backend-controller.php", {action: "gettasks"}, function(data){
 		var tasks = data['tasks'];
 		generateTasksView(tasks);
-		displayRateAndRemaining();
 	});
 	switchTab("home");
 }
@@ -159,7 +159,7 @@ function displayTasks(){
 }
 
 function displayRateAndRemaining(){
-	$.get("service/backend-controller.php", {action: "rate"}, function(data){
+	$.getJSON("backend-controller.php", {action: "rate"}, function(data){
 		$("#rate").html(data['rate']);
 		
 		if(data['remaining']=="Infinite"){
