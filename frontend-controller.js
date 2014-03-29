@@ -1,4 +1,12 @@
 $(function(){
+	/*
+	$.getJSON("backend-controller.php", {action: "https"}, function(data){
+		if (data['status'] == 'no'){
+			window.location.href = data['url'];
+		}
+	});	
+	*/
+
 	checkAuthentication();
 
 	$("#account-button").on("click", function(){
@@ -11,7 +19,7 @@ $(function(){
 	});
 
 	$("#nav-addtask").on("click", function() {
-		$.getJSON("backend.php", {action: "auth"}, function(data){
+		$.getJSON("backend-controller.php", {action: "auth"}, function(data){
 			if (data['auth'] == 'no') {
 				// do nothing
 			} else {
