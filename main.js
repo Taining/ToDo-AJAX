@@ -321,8 +321,9 @@ function logout(){
 }
 
 function initAddTaskView() {
-	var form = document.getElementById("add-task-form");
-	form.reset();
+	$("#addtask-form input[name=dscrp]").val("");
+	$("#addtask-form textarea[name=details]").val("");
+	$("#addtask-form input[name=total]").val("");
 }
 
 function switchView(option){
