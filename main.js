@@ -323,6 +323,9 @@ function logout(){
 function switchView(option){
 	$(".view-control").hide();
 	if (option == "login") {
+		//empty login password field
+		var password = $('#login-form input[name=password]').val("");
+
 		$("#login").show();
 		switchTab("others");
 	} else if(option == "signup"){
@@ -333,6 +336,11 @@ function switchView(option){
 		getTasks();
 		switchTab("home");
 	} else if(option == "account"){
+		//empty update password form
+		var oldPassword = $("#update-account input[name=old-password]").val("");
+		var newPassword = $("#update-account input[name=new-password]").val("");
+		var rePassword = $("#update-account input[name=re-password]").val("");
+
 		$("#account-info .error").hide();
 		$("#password-info .error").hide();
 		$("#update-account").show();
