@@ -295,11 +295,11 @@ nav #current-page {
 	padding: 1 0 2em 0;
 }
 .small-container {
-	padding: 1em 3em;
+	padding: 1em 0em;
 }
 #options {
 	border: 4px solid #CC6161;
-	width: 350px;
+	width: 420px;
 	height: 30px;
 	position: absolute;
 	left: 40px;
@@ -321,10 +321,10 @@ nav #current-page {
 }
 #info {
 	border: 4px solid #CC6161;
-	width: 350px;
+	width: 420px;
 	height:30px;
 	position: absolute;
-	left: 530px;
+	left: 550px;
 	border-radius: 15px;
 	text-align: center;
 }

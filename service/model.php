@@ -233,7 +233,7 @@ function caculateRate($dbconn) {
 	if ($dateDiff != 0) {
 		$rate = intval($done / $dateDiff);
 	} else {
-		$rate = 0;
+		$rate = $done;
 	}
 	return $rate;
 }
