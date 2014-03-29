@@ -158,40 +158,28 @@ function displayTasks(){
 	getTasks();
 }
 
-function displayRateAndRemaining(){
-	$.get("backend-controller.php", {action: "rate"}, function(data){
-		$("#rate").html(data['rate']);
-		
-		if(data['remaining']=="Infinite"){
-			$("#remaining").html("&#8734");
-		}else{
-			$("#remaining").html(data['remaining']);
-		}
-	});
-}
-
 function undoTask(taskid) {
 	$.getJSON("backend-controller.php", {action: "undo", taskid:taskid}, function(data){ });
 	// update task view
-	displayTasks();
+	switchView("tasks");
 }
 
 function doTask(taskid) {
 	$.getJSON("backend-controller.php", {action: "doit", taskid:taskid}, function(data){ });
 	// update task view
-	displayTasks();
+	switchView("tasks");
 }
 
 function deleteTask(taskid) {
 	$.getJSON("backend-controller.php", {action: "delete", taskid:taskid}, function(data){ });
 	// update task view
-	getTasks();
+	switchView("tasks");
 }
 
 function markAsDone(taskid) {
 	$.getJSON("backend-controller.php", {action: "markdone", taskid:taskid}, function(data){ });
 	// update task view
-	getTasks();
+	switchView("tasks");
 }
 
 function addTask() {
@@ -360,8 +348,9 @@ function switchView(option){
 		switchTab("others");
 	} else if(option == "tasks"){
 		$("#content").show();
-		getTasks();
 		switchTab("home");
+		getTasks();
+		displayRateAndRemaining();
 	} else if(option == "account"){
 		//empty update password form
 		var oldPassword = $("#update-account input[name=old-password]").val("");
@@ -393,6 +382,18 @@ function switchTab(option){
 		$("#nav-home").css({"background":"#751B05", "color":"#ededed"});
 		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});		
 	}
+}
+
+function displayRateAndRemaining(){
+	$.getJSON("backend-controller.php", {action: "rate"}, function(data){
+		$("#rate").html(data['rate']);
+		
+		if(data['remaining']=="Infinite"){
+			$("#remaining").html("&#8734");
+		}else{
+			$("#remaining").html(data['remaining']);
+		}
+	});
 }
 
 
