@@ -74,14 +74,16 @@ function signup(){
 	var policy 	= $("#signup-form input[name=policy]").val();
 
 	//user must fill in all fields
+	var html = "";
 	if (!fname || !lname || !email || !password || !repassword || month==0 || day==0 || year==0
 		|| !news || !policy) {
 		$("#signup-form .error").show();
-		$("#signup-form .error").html('Please fill in all required fields.');
-	} else if (password != repassword){
+		html += 'Please fill in all required fields.';
+	}
+	if (password != repassword){
 		//passwords do not match
 		$("#signup-form .error").show();
-		$("#signup-form .error").html('Passwords do not match.');
+		html += 'Passwords do not match.';
 	} else {
 		//send data to backend.php to further validate and update database
 		$.getJSON('backend-controller.php', {action: "signup", fname: fname, lname: lname, email: email, password:password, month: month, day: day, year: year, sex: sex, news: news, policy: policy}, function(data){
@@ -98,6 +100,11 @@ function signup(){
 
 function generateTasksView(tasks) {
 	$(".tasks").html("");
+	
+	if(tasks == null){
+		$(".tasks").html("<ul><li>Please add your first task.</li></ul>");
+		return;
+	}
 	
 	var html = "<ul>";
 	for (var i = 0; i < tasks.length; i++) {
@@ -388,6 +395,7 @@ function switchTab(option){
 		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});		
 	}
 }
+
 
 
 

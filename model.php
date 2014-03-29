@@ -12,15 +12,16 @@ function connectToDatabase($db_name, $db_user, $db_password){
 }
 
 //user model---------------------------------------------------
-function findUser(){
-	// find a match in database
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
-	$select_user_query = ("SELECT * FROM appuser WHERE email = $1 AND password = $2;");
+function findUser($dbconn){
+	$select_user_query = ("SELECT * FROM appuser WHERE email = $1;");
 	$result = pg_prepare($dbconn, "select_user", $select_user_query);
-	$result = pg_execute($dbconn, "select_user", array($_REQUEST['email'], md5($_REQUEST['password'])));
+	$result = pg_execute($dbconn, "select_user", array($_REQUEST['email']));
+	
+	//calculate password
+	$row = pg_fetch_array($result);
+	$password = hash("sha256", $_REQUEST['password'] . $row['salt']);
 
-	if(pg_num_rows($result)){
-		$row = pg_fetch_array($result);
+	if($row['password'] == $password){
 		$_SESSION['user'] = $row['uid'];
 		return true;
 	}
@@ -28,8 +29,7 @@ function findUser(){
 	return false;
 }
 
-function addUser(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function addUser($dbconn){
 	$select_user_query = ("SELECT * FROM appuser WHERE email = $1;");
 	$result = pg_prepare($dbconn, "select_user", $select_user_query);
 	$result = pg_execute($dbconn, "select_user", array($_REQUEST['email']));
@@ -37,28 +37,31 @@ function addUser(){
 	if(pg_num_rows($result)){
 		return false;
 	} else {
+		//calculate password
+		$intermediateSalt = md5(uniqid(rand(), true));
+    	$salt = substr($intermediateSalt, 0, 8);
+    	$password = hash("sha256", $_REQUEST['password'] . $salt);
+    
 		//insert into database
 		$year = $_REQUEST['year'];
 		$month = $_REQUEST['month'];
 		$day = $_REQUEST['day'];
-		$insert_user_query = "INSERT INTO appuser (email, fname, lname, password, birthday, signupdate, news, sex, done) VALUES($1, $2, $3, $4, $5, $6, $7, $8, 0);";
+		$insert_user_query = "INSERT INTO appuser (email, fname, lname, password, salt, birthday, signupdate, news, sex, done) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, 0);";
 		$result = pg_prepare($dbconn, "insert_user", $insert_user_query);
-		$result = pg_execute($dbconn, "insert_user", array($_REQUEST['email'], $_REQUEST['fname'], $_REQUEST['lname'], md5($_REQUEST['password']), "$year-$month-$day", date("Y-m-d"), $_REQUEST['news'], $_REQUEST['sex']));
+		$result = pg_execute($dbconn, "insert_user", array($_REQUEST['email'], $_REQUEST['fname'], $_REQUEST['lname'], $password, $salt, "$year-$month-$day", date("Y-m-d"), $_REQUEST['news'], $_REQUEST['sex']));
 
 		return true;
 	}
 }
 
-function getUserInfo(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function getUserInfo($dbconn){
 	$result = pg_query($dbconn, "SELECT * FROM appuser WHERE uid = $_SESSION[user]");
 	$row = pg_fetch_array($result);
 
 	return $row;
 }
 
-function updateUser(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function updateUser($dbconn){
 	//update user account information
 	$birthday = $_REQUEST['year'] . '-' . $_REQUEST['month'] . '-' . $_REQUEST['day'];
 	$update_user_query = "UPDATE appuser SET (email, fname, lname, birthday, news, sex) = ($1, $2, $3, $4, $5, $6) WHERE uid = $7;";
@@ -69,11 +72,15 @@ function updateUser(){
 	else return false;
 }
 
-function updatePassword(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
-	$update_pwd_query = "UPDATE appuser SET (password) = ($1) WHERE uid = $2;";
+function updatePassword($dbconn){
+	//calculate password
+	$intermediateSalt = md5(uniqid(rand(), true));
+    $salt = substr($intermediateSalt, 0, 8);
+    $password = hash("sha256", $_REQUEST['newPassword'] . $salt);
+
+	$update_pwd_query = "UPDATE appuser SET (password, salt) = ($1, $2) WHERE uid = $3;";
 	$result = pg_prepare($dbconn, "update_pwd", $update_pwd_query);
-	$result = pg_execute($dbconn, "update_pwd", array(md5($_REQUEST['newPassword']), $_SESSION['user']));
+	$result = pg_execute($dbconn, "update_pwd", array($password, $salt, $_SESSION['user']));
 
 	if($result) return true;
 	else return false;
@@ -82,8 +89,7 @@ function updatePassword(){
 
 
 //task model---------------------------------------------------
-function getTasks(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);	
+function getTasks($dbconn){
 	$get_tasks_query="SELECT * FROM tasks WHERE uid=$1 ORDER BY taskid";
 	$result = pg_prepare($dbconn, "get_tasks", $get_tasks_query);
 	$result = pg_execute($dbconn, "get_tasks", array($_SESSION['user']));
@@ -91,8 +97,7 @@ function getTasks(){
 	return $result;
 }
 
-function addTask(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function addTask($dbconn){
 	// get new taskid
 	$query = "SELECT MAX(taskid) FROM tasks;";
 	$result=pg_query($dbconn, $query);
@@ -113,8 +118,7 @@ function addTask(){
 	return true;
 }
 
-function deleteTask(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function deleteTask($dbconn){
 	$delete_task_query = "DELETE FROM tasks WHERE taskid=$1;";
 	$delete_result = pg_prepare($dbconn, "delete_task", $delete_task_query);
 	$delete_result = pg_execute($dbconn, "delete_task", array($_REQUEST['taskid']));
@@ -122,8 +126,7 @@ function deleteTask(){
 	return true;
 }
 
-function updateTask(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function updateTask($dbconn){
 	// get current progress
 	$get_progress_query = "SELECT progress FROM tasks WHERE taskid=$1";
 	$progress_result = pg_prepare($dbconn, "get_progress", $get_progress_query);
@@ -146,9 +149,7 @@ function updateTask(){
 	return true;
 }
 
-function doTask(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
-
+function doTask($dbconn){
 	$get_progress_query = "SELECT progress, uid FROM tasks WHERE taskid=$1";
 	$result = pg_prepare($dbconn, "get_progress", $get_progress_query);
 	$result = pg_execute($dbconn, "get_progress", array($_REQUEST['taskid']));
@@ -177,9 +178,7 @@ function doTask(){
 	return true;
 }
 
-function undoTask(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
-
+function undoTask($dbconn){
 	$get_progress_query = "SELECT progress FROM tasks WHERE taskid=$1";
 	$result = pg_prepare($dbconn, "get_progress", $get_progress_query);
 	$result = pg_execute($dbconn, "get_progress", array($_REQUEST['taskid']));
@@ -195,8 +194,7 @@ function undoTask(){
 	return true;
 }
 
-function doneTask(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function doneTask($dbconn){
 	$total_query = "SELECT total FROM tasks WHERE uid=$1 AND taskid=$2";
 	$total_result = pg_prepare($dbconn, "get_total", $total_query);
 	$total_result = pg_execute($dbconn, "get_total", array($_SESSION['user'], $_REQUEST['taskid']));
@@ -209,8 +207,7 @@ function doneTask(){
 	return true;
 }
 
-function getTaskInfo(){
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function getTaskInfo($dbconn){
 	$query="SELECT * FROM tasks WHERE taskid=$1";
 	$result = pg_prepare($dbconn, "get_task_info", $query);
 	$result = pg_execute($dbconn, "get_task_info", array($_REQUEST['taskid']));
@@ -219,8 +216,7 @@ function getTaskInfo(){
 	return $row;
 }
 
-function caculateRate() {
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function caculateRate($dbconn) {
 	// caculate rate
 	$signup_query = "SELECT signupdate, done FROM appuser WHERE uid=$1";
 	$signup_result = pg_prepare($dbconn, "signup", $signup_query);
@@ -241,8 +237,7 @@ function caculateRate() {
 	return $rate;
 }
 
-function caculateRemaining ($rate) {
-	$dbconn = connectToDatabase(db_name, db_user, db_password);
+function caculateRemaining ($dbconn, $rate) {
 	// caculate remaining days
 	$query = "SELECT SUM(total), SUM(progress) FROM tasks WHERE uid=$1";
 	$result = pg_prepare($dbconn, "total_progress", $query);

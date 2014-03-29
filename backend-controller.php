@@ -4,6 +4,8 @@
 
 	header('Content-Type: application/json');
 	require "model.php";
+
+	$dbconn = connectToDatabase($db_name, $db_user, $db_password);
 	
 	if (!isset($_REQUEST['action'])) {
 		$reply['status'] = 'error';
@@ -26,7 +28,7 @@
 		//check if email and password are filled in
 		if (!$_REQUEST['email'] || !$_REQUEST['password']) {
 			$reply['error'] = 'Please enter both email and password.';
-		} else if (findUser()) {
+		} else if (findUser($dbconn)) {
 			$reply['status'] = 'ok';	
 		} else {
 			$reply['status'] = 'no';
@@ -41,9 +43,10 @@
 		
 		if (!filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL)) {
 			$reply['error'] = 'Please enter a valid email.';
-		} else if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
-			$reply['error'] = 'Please enter a valid birthday.';
-		} else if (addUser()) {
+		}
+		if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
+			$reply['error'] .= 'Please enter a valid birthday.';
+		} else if (addUser($dbconn)) {
 			$reply['status'] = 'ok';
 		} else {
 			$reply['error'] = 'Email has been registered.';
@@ -53,7 +56,7 @@
 	}
 	
 	if($_REQUEST['action'] == "getaccount"){
-		$result = getUserInfo();
+		$result = getUserInfo($dbconn);
 
 		//compute year, month and day
 		$birthday = explode("-", $result['birthday']);
@@ -75,7 +78,7 @@
 			$reply['error'] = 'Please enter a valid email.';
 		} else if (!checkdate($_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year'])) {
 			$reply['error'] = 'Please enter a valid birthday.';
-		} else if(updateUser()){
+		} else if(updateUser($dbconn)){
 			$reply['status'] = 'ok';
 			$reply['msg'] = "Your information has been updated.";
 		} else {
@@ -87,19 +90,21 @@
 	
 	if($_REQUEST['action'] == "updatepassword"){
 		$reply = array('status' => 'no');
-		$result = getUserInfo();
-		$password = $result['password'];
+		$result = getUserInfo($dbconn);
+		
+		//calculate password
+		$password = hash("sha256", $_REQUEST['oldPassword'] . $result['salt']);
 
 		//validate password form
 		if(!$_REQUEST['oldPassword'] || !$_REQUEST['newPassword'] || !$_REQUEST['rePassword']){
 			$reply['error'] = "Please fill in all fields.";
-		} else if (md5($_REQUEST['oldPassword']) != $password) {
+		} else if ($result['password'] != $password) {
 			$reply['error'] = "Please enter correct old password.";
 		} else if($_REQUEST['newPassword'] != $_REQUEST['rePassword']){
 			$reply['error'] = "Passwords do not match.";
 		} else {
 			//update user password
-			if(updatePassword()) {
+			if(updatePassword($dbconn)) {
 				$reply['status'] = 'ok';
 				$reply['msg'] = "Your password has been updated.";
 			} else $reply['error'] = "Update password failed.";
@@ -110,7 +115,7 @@
 	
 	if($_REQUEST['action'] == "gettasks"){
 		$reply = array('status' => 'no');
-		$result = getTasks();
+		$result = getTasks($dbconn);
 
 		if ($result) {
 			while ($row = pg_fetch_array($result)) {
@@ -124,48 +129,48 @@
 	
 	if($_REQUEST['action'] == "undo") {
 		$reply = array('status' => 'ok');
-		undoTask();
+		undoTask($dbconn);
 		print json_encode($reply);
 		return;
 	}
 	
 	if($_REQUEST['action'] == "doit") {
 		$reply = array('status' => 'ok');
-		doTask();
+		doTask($dbconn);
 		print json_encode($reply);
 		return;
 	}
 	
 	if($_REQUEST['action'] == "delete") {
 		$reply = array('status' => 'ok');
-		deleteTask();
+		deleteTask($dbconn);
 		print json_encode($reply);
 		return;
 	}
 	
 	if($_REQUEST['action'] == "markdone") {
 		$reply = array('status' => 'ok');
-		doneTask();
+		doneTask($dbconn);
 		print json_encode($reply);
 		return;
 	}
 	
 	if($_REQUEST['action'] == "addtask") {
 		$reply = array('status' => 'ok');
-		addTask();
+		addTask($dbconn);
 		print json_encode($reply);
 		return;
 	}
 	
 	if ($_REQUEST['action']=="getinfo"){
-		$result = getTaskInfo();
+		$result = getTaskInfo($dbconn);
 		$result['status'] = 'ok';
 		print json_encode($result);
 		return;
 	}
 	
 	if ($_REQUEST['action']=="edittask"){
-		updateTask();
+		updateTask($dbconn);
 		$reply = array('status' => 'ok');
 		print json_encode($reply);
 		return;
@@ -181,8 +186,8 @@
 	if($_REQUEST['action'] == "rate"){
 		$reply = array();
 		
-		$rate = caculateRate();
-		$remaining = caculateRemaining($rate);
+		$rate = caculateRate($dbconn);
+		$remaining = caculateRemaining($dbconn, $rate);
 		
 		$reply['rate'] = $rate;
 		$reply['remaining'] = $remaining;
