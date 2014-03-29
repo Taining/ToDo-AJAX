@@ -148,7 +148,6 @@ function getTasks() {
 	$.getJSON("backend-controller.php", {action: "gettasks"}, function(data){
 		var tasks = data['tasks'];
 		generateTasksView(tasks);
-		displayRateAndRemaining();
 	});
 	switchTab("home");
 }
@@ -156,6 +155,18 @@ function getTasks() {
 function displayTasks(){
 	switchView("tasks");
 	getTasks();
+}
+
+function displayRateAndRemaining(){
+	$.getJSON("backend-controller.php", {action: "rate"}, function(data){
+		$("#rate").html(data['rate']);
+		
+		if(data['remaining']=="Infinite"){
+			$("#remaining").html("&#8734");
+		}else{
+			$("#remaining").html(data['remaining']);
+		}
+	});
 }
 
 function undoTask(taskid) {
@@ -382,18 +393,6 @@ function switchTab(option){
 		$("#nav-home").css({"background":"#751B05", "color":"#ededed"});
 		$("#nav-addtask").css({"background":"#751B05", "color":"#ededed"});		
 	}
-}
-
-function displayRateAndRemaining(){
-	$.getJSON("backend-controller.php", {action: "rate"}, function(data){
-		$("#rate").html(data['rate']);
-		
-		if(data['remaining']=="Infinite"){
-			$("#remaining").html("&#8734");
-		}else{
-			$("#remaining").html(data['remaining']);
-		}
-	});
 }
 
 
