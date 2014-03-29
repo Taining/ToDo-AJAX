@@ -77,6 +77,9 @@
 		$reply = array('status' => 'no', 'error' => '');
 
 		//validate account information
+		if(!$_REQUEST['fname'] || !$_REQUEST['lname'] || !$_REQUEST['email']){
+			$reply['error'] .= 'Fill in all fields.';
+		}
 		if (!filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL)) {
 			$reply['error'] .= 'Invalid email. ';
 		}
