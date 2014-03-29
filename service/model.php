@@ -1,6 +1,6 @@
 <?php
 
-require "config.inc";
+include "config.inc";
 
 function connectToDatabase($db_name, $db_user, $db_password){
 	$dbconn = pg_connect("host=localhost port=5432 dbname=$db_name user=$db_user password=$db_password");
