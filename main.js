@@ -292,7 +292,6 @@ function editTask(taskid) {
 function getAccount(){
 	$.get("controller.php", {action: "getaccount"}, function(data) {
 		console.log(data['status']);
-		console.log(data);
 		if (data['status'] == 'ok') {
 			$("#update-account input[name=fname]").val(data['fname']);
 			$("#update-account input[name=lname]").val(data['lname']);
@@ -308,7 +307,29 @@ function getAccount(){
 			}
 		}
 	});
+
+	$("#update-account input[name=info]").on("click", function(){
+		updateAccount();
+	});
 }
+
+function updateAccount(){
+	var fname 	= $("#update-account input[name=fname]").val();
+	var lname 	= $("#update-account input[name=lname]").val();
+	var email 	= $("#update-account input[name=email]").val();
+	var year 	= $("#update-account select[name=year]").val();
+	var month 	= $("#update-account select[name=month]").val();
+	var day 	= $("#update-account select[name=day]").val();
+	var sex 	= $("#update-account input[name=sex]:checked").val();
+	if ($("#update-account input[name=news]:checked")) {
+		var news = 'true';
+	} else {
+		var news = 'false';
+	}
+
+	console.log(fname + " " + lname + " " + email + " " + year + " " + month + " " + day + " " + sex + " " + news);
+}
+
 
 function logout(){
 	$.getJSON("controller.php", {action: "logout"}, function(){
