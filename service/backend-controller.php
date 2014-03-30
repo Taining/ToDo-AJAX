@@ -105,7 +105,8 @@
 		
 		//calculate password
 		$password = hash("sha256", $_REQUEST['oldPassword'] . $result['salt']);
-
+		$reply['password'] = $password;
+		
 		//validate password form
 		if(!$_REQUEST['oldPassword'] || !$_REQUEST['newPassword'] || !$_REQUEST['rePassword']){
 			$reply['error'] .= "Fill in all fields. ";
