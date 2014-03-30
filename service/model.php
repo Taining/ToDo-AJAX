@@ -258,4 +258,26 @@ function caculateRemaining ($dbconn, $rate) {
 	return $remainingDays;
 }
 
+function validate($data)
+{
+	//prevent cross sites scripting
+
+  	$data = trim($data);
+  	$data = stripslashes($data);
+  	$data = htmlspecialchars($data);
+  	return $data;
+}
+?>
+
+
+
+
+
+
+
+
+
+
+
+
 ?>
