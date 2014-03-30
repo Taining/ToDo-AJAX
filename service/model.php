@@ -49,7 +49,7 @@ function addUser($dbconn){
 		$day = $_REQUEST['day'];
 		$insert_user_query = "INSERT INTO appuser (email, fname, lname, password, salt, birthday, signupdate, news, sex, done) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, 0);";
 		$result = pg_prepare($dbconn, "insert_user", $insert_user_query);
-		$result = pg_execute($dbconn, "insert_user", array($_REQUEST['email'], $_REQUEST['fname'], $_REQUEST['lname'], $password, $salt, "$year-$month-$day", date("Y-m-d"), $_REQUEST['news'], $_REQUEST['sex']));
+		$result = pg_execute($dbconn, "insert_user", array(validate($_REQUEST['email']), validate($_REQUEST['fname']), validate($_REQUEST['lname']), $password, $salt, "$year-$month-$day", date("Y-m-d"), $_REQUEST['news'], $_REQUEST['sex']));
 
 		return true;
 	}
@@ -67,7 +67,7 @@ function updateUser($dbconn){
 	$birthday = $_REQUEST['year'] . '-' . $_REQUEST['month'] . '-' . $_REQUEST['day'];
 	$update_user_query = "UPDATE appuser SET (email, fname, lname, birthday, news, sex) = ($1, $2, $3, $4, $5, $6) WHERE uid = $7;";
 	$result = pg_prepare($dbconn, "update_user", $update_user_query);
-	$result = pg_execute($dbconn, "update_user", array($_REQUEST['email'], $_REQUEST['fname'], $_REQUEST['lname'], $birthday, $_REQUEST['news'], $_REQUEST['sex'], $_SESSION['user']));
+	$result = pg_execute($dbconn, "update_user", array(validate($_REQUEST['email']), validate($_REQUEST['fname']), validate($_REQUEST['lname']), $birthday, $_REQUEST['news'], $_REQUEST['sex'], $_SESSION['user']));
 
 	if ($result) return true;
 	else return false;
